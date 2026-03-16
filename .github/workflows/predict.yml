@@ -1,0 +1,58 @@
+name: KOBRA – Daily NBA Predictions
+
+on:
+  # Täglich um 14:00 UTC (Spiele starten meist abends US-Zeit)
+  schedule:
+    - cron: "0 14 * * *"
+  # Manuell auslösbar
+  workflow_dispatch:
+    inputs:
+      date:
+        description: "Datum (YYYY-MM-DD), leer = heute"
+        required: false
+        default: ""
+
+jobs:
+  predict:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Python einrichten
+        uses: actions/setup-python@v5
+        with:
+          python-version: "3.12"
+          cache: "pip"
+
+      - name: Abhängigkeiten installieren
+        run: pip install -r requirements.txt
+
+      - name: Vorhersagen erstellen
+        env:
+          BALLDONTLIE_API_KEY: ${{ secrets.BALLDONTLIE_API_KEY }}
+        run: |
+          DATE_ARG=""
+          if [ -n "${{ github.event.inputs.date }}" ]; then
+            DATE_ARG="--date ${{ github.event.inputs.date }}"
+          fi
+          python kobra.py $DATE_ARG --output predictions.csv
+
+      - name: Ergebnisse als Artifact hochladen
+        uses: actions/upload-artifact@v4
+        with:
+          name: predictions-${{ github.event.inputs.date || 'today' }}
+          path: predictions.csv
+          retention-days: 90
+
+      - name: Ergebnisse ins Repo committen
+        run: |
+          DATE=$(date +%Y-%m-%d)
+          mkdir -p results
+          cp predictions.csv "results/predictions_${DATE}.csv"
+          git config user.name "github-actions[bot]"
+          git config user.email "github-actions[bot]@users.noreply.github.com"
+          git add results/
+          git diff --staged --quiet || git commit -m "🏀 Predictions for ${DATE}"
+          git push
