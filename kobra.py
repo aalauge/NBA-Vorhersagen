@@ -4,7 +4,7 @@ KOBRA – NBA Game Prediction Model
 Predicts today's NBA games using logistic regression with:
 - Rolling win rates & scoring averages
 - Elo ratings (with season regression)
-- Injury impact correction (ESPN scraping + nba_api player stats)
+- Injury impact correction (ESPN scraping + player_stats.csv)
 
 Usage:
     python kobra.py                     # Predict today's games
@@ -25,7 +25,6 @@ import numpy as np
 import pandas as pd
 import requests
 from bs4 import BeautifulSoup
-from nba_api.stats.endpoints import leaguedashplayerstats
 from sklearn.linear_model import LogisticRegression
 from sklearn.metrics import accuracy_score
 
@@ -424,63 +423,28 @@ def lade_verletzungen() -> pd.DataFrame:
     return df
 
 
-# ─── SCHRITT 7: Spieler Impact Scores ────────────────────────────────────────
+# ─── SCHRITT 7: Spieler Impact Scores (aus lokaler CSV) ──────────────────────
 
-def lade_spieler_stats(saison: str, min_games: int = 20) -> pd.DataFrame:
-    """Spieler-Statistiken von nba_api laden."""
-    try:
-        stats = leaguedashplayerstats.LeagueDashPlayerStats(
-            season=saison, per_mode_detailed="PerGame"
-        )
-        df = stats.get_data_frames()[0]
-        df = df[df["GP"] >= min_games]
-        return df[["PLAYER_NAME", "TEAM_ABBREVIATION", "MIN", "PTS", "REB", "AST", "GP"]]
-    except Exception as e:
-        log.warning(f"Spieler-Stats für {saison} nicht ladbar: {e}")
+def lade_impact_scores() -> pd.DataFrame:
+    """
+    Liest player_stats.csv – wird täglich von deinem Mac aktualisiert
+    und ins Repo gepusht. Funktioniert daher auch in der Cloud.
+    """
+    csv_path = os.path.join(os.path.dirname(os.path.abspath(__file__)), "player_stats.csv")
+
+    if not os.path.exists(csv_path):
+        log.warning(f"player_stats.csv nicht gefunden ({csv_path}). "
+                    "Bitte update_stats.py lokal ausführen!")
         return pd.DataFrame()
 
+    df = pd.read_csv(csv_path)
 
-def berechne_impact(df: pd.DataFrame) -> pd.DataFrame:
-    """Impact Score (0–10) für jeden Spieler berechnen."""
-    if len(df) == 0:
-        return df
-    df = df.copy()
-    df["Impact"] = df["PTS"] * 1.0 + df["AST"] * 1.5 + df["REB"] * 0.8 + df["MIN"] * 0.3
-    max_impact = df["Impact"].max()
-    if max_impact > 0:
-        df["Impact_Score"] = (df["Impact"] / max_impact * 10).round(2)
-    else:
-        df["Impact_Score"] = 0.0
+    if "Impact_Final" not in df.columns:
+        log.warning("player_stats.csv hat kein Impact_Final – Format falsch?")
+        return pd.DataFrame()
+
+    log.info(f"{len(df)} Spieler mit Impact Score aus player_stats.csv geladen")
     return df
-
-
-def lade_impact_scores(saison_aktuell: str, saison_vorjahr: str) -> pd.DataFrame:
-    """Kombinierte Impact Scores (60 % aktuell, 40 % Vorjahr)."""
-    log.info("Lade Spieler-Stats…")
-    aktuell = berechne_impact(lade_spieler_stats(saison_aktuell))
-    vorjahr = berechne_impact(lade_spieler_stats(saison_vorjahr))
-
-    if len(aktuell) == 0:
-        log.warning("Keine aktuellen Spieler-Stats verfügbar.")
-        return pd.DataFrame()
-
-    if len(vorjahr) > 0:
-        kombiniert = aktuell.merge(
-            vorjahr[["PLAYER_NAME", "Impact_Score"]],
-            on="PLAYER_NAME",
-            suffixes=("_Aktuell", "_Vorjahr"),
-            how="left",
-        )
-        kombiniert["Impact_Final"] = (
-            kombiniert["Impact_Score_Aktuell"] * 0.6
-            + kombiniert["Impact_Score_Vorjahr"].fillna(kombiniert["Impact_Score_Aktuell"]) * 0.4
-        ).round(2)
-    else:
-        kombiniert = aktuell.copy()
-        kombiniert.rename(columns={"Impact_Score": "Impact_Final"}, inplace=True)
-
-    log.info(f"{len(kombiniert)} Spieler mit Impact Score")
-    return kombiniert
 
 
 # ─── SCHRITT 8: Verletzungskorrektur ─────────────────────────────────────────
@@ -572,10 +536,6 @@ def main():
                         help="Trainings-Saisons")
     parser.add_argument("--output", default=None,
                         help="Ausgabe-CSV (default: predictions_DATUM.csv)")
-    parser.add_argument("--nba-season-current", default="2025-26",
-                        help="Aktuelle NBA-Saison für Spieler-Stats")
-    parser.add_argument("--nba-season-previous", default="2024-25",
-                        help="Vorherige NBA-Saison für Spieler-Stats")
     args = parser.parse_args()
 
     datum = args.date
@@ -617,7 +577,7 @@ def main():
 
     # 7) Verletzungen + Impact
     verletzungen_df = lade_verletzungen()
-    impact_df = lade_impact_scores(args.nba_season_current, args.nba_season_previous)
+    impact_df = lade_impact_scores()
 
     # 8) Finale Vorhersagen
     if len(verletzungen_df) > 0 and len(impact_df) > 0:
