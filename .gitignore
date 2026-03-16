@@ -1,6 +1,6 @@
 __pycache__/
 *.pyc
 .env
-predictions_*.csv
+/predictions_*.csv
 update_log.txt
 !results/
