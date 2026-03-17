@@ -53,7 +53,7 @@ jobs:
           cp predictions.csv "results/predictions_${DATE}.csv"
           git config user.name "github-actions[bot]"
           git config user.email "github-actions[bot]@users.noreply.github.com"
-          git pull --rebase origin main
           git add results/
           git diff --staged --quiet || git commit -m "🏀 Predictions for ${DATE}"
-          git push origin main
+          git pull --rebase origin main || true
+          git push origin main || true
