@@ -200,6 +200,57 @@ def _avg_pts(spiele: pd.DataFrame, team: str) -> tuple[float, float]:
     return np.mean(scored), np.mean(conceded)
 
 
+def _winrate_weighted(spiele: pd.DataFrame, team: str) -> float:
+    """Gewichtete Winrate – neuere Spiele zählen mehr."""
+    if len(spiele) == 0:
+        return 0.5
+    n = len(spiele)
+    total_weight = 0
+    weighted_wins = 0
+    for i, (_, r) in enumerate(spiele.iterrows()):
+        weight = (i + 1) / n
+        won = (r["home_team"] == team and r["home_win"] == 1) or               (r["away_team"] == team and r["home_win"] == 0)
+        weighted_wins += weight * int(won)
+        total_weight += weight
+    return weighted_wins / total_weight
+
+
+def _home_winrate(df: pd.DataFrame, team: str, vor_datum, window: int) -> float:
+    """Winrate nur für Heimspiele."""
+    mask = (df["date"] < vor_datum) & (df["home_team"] == team)
+    spiele = df.loc[mask].tail(window)
+    if len(spiele) == 0:
+        return 0.5
+    return spiele["home_win"].mean()
+
+
+def _away_winrate(df: pd.DataFrame, team: str, vor_datum, window: int) -> float:
+    """Winrate nur für Auswärtsspiele."""
+    mask = (df["date"] < vor_datum) & (df["away_team"] == team)
+    spiele = df.loc[mask].tail(window)
+    if len(spiele) == 0:
+        return 0.5
+    return (1 - spiele["home_win"]).mean()
+
+
+def _avg_pts_weighted(spiele: pd.DataFrame, team: str) -> tuple[float, float]:
+    """Gewichtete Punkte – neuere Spiele zählen mehr."""
+    if len(spiele) == 0:
+        return 110.0, 110.0
+    n = len(spiele)
+    w_scored, w_conceded, w_total = 0, 0, 0
+    for i, (_, r) in enumerate(spiele.iterrows()):
+        weight = (i + 1) / n
+        if r["home_team"] == team:
+            w_scored += weight * r["home_score"]
+            w_conceded += weight * r["away_score"]
+        else:
+            w_scored += weight * r["away_score"]
+            w_conceded += weight * r["home_score"]
+        w_total += weight
+    return w_scored / w_total, w_conceded / w_total
+
+
 def berechne_features(df: pd.DataFrame, window: int = FORM_WINDOW) -> pd.DataFrame:
     """Rolling Winrate + Punkte-Features für Heim- und Auswärtsteam."""
     log.info("Berechne Form- und Punkte-Features…")
@@ -216,13 +267,18 @@ def berechne_features(df: pd.DataFrame, window: int = FORM_WINDOW) -> pd.DataFra
         h_scored, h_conceded = _avg_pts(h_spiele, heim)
         a_scored, a_conceded = _avg_pts(a_spiele, ausw)
 
+        h_scored_w, h_conceded_w = _avg_pts_weighted(h_spiele, heim)
+        a_scored_w, a_conceded_w = _avg_pts_weighted(a_spiele, ausw)
+
         records.append({
-            "home_winrate": _winrate(h_spiele, heim),
-            "away_winrate": _winrate(a_spiele, ausw),
-            "home_pts_scored": h_scored,
-            "home_pts_conceded": h_conceded,
-            "away_pts_scored": a_scored,
-            "away_pts_conceded": a_conceded,
+            "home_winrate": _winrate_weighted(h_spiele, heim),
+            "away_winrate": _winrate_weighted(a_spiele, ausw),
+            "home_pts_scored": h_scored_w,
+            "home_pts_conceded": h_conceded_w,
+            "away_pts_scored": a_scored_w,
+            "away_pts_conceded": a_conceded_w,
+            "home_home_winrate": _home_winrate(df, heim, datum, window),
+            "away_away_winrate": _away_winrate(df, ausw, datum, window),
         })
 
     feat_df = pd.DataFrame(records, index=df.index)
@@ -286,6 +342,7 @@ FEATURES = [
     "home_pts_scored", "home_pts_conceded",
     "away_pts_scored", "away_pts_conceded",
     "home_elo", "away_elo",
+    "home_home_winrate", "away_away_winrate",
 ]
 
 
@@ -355,15 +412,20 @@ def erstelle_vorhersagen(
         h_elo = elo.get(heim, ELO_START)
         a_elo = elo.get(ausw, ELO_START)
 
+        h_scored_w, h_conceded_w = _avg_pts_weighted(h_spiele, heim)
+        a_scored_w, a_conceded_w = _avg_pts_weighted(a_spiele, ausw)
+
         x = pd.DataFrame([{
-            "home_winrate": h_winrate,
-            "away_winrate": a_winrate,
-            "home_pts_scored": h_scored,
-            "home_pts_conceded": h_conceded,
-            "away_pts_scored": a_scored,
-            "away_pts_conceded": a_conceded,
+            "home_winrate": _winrate_weighted(h_spiele, heim),
+            "away_winrate": _winrate_weighted(a_spiele, ausw),
+            "home_pts_scored": h_scored_w,
+            "home_pts_conceded": h_conceded_w,
+            "away_pts_scored": a_scored_w,
+            "away_pts_conceded": a_conceded_w,
             "home_elo": h_elo,
             "away_elo": a_elo,
+            "home_home_winrate": _home_winrate(df, heim, now, FORM_WINDOW),
+            "away_away_winrate": _away_winrate(df, ausw, now, FORM_WINDOW),
         }])
 
         prob = model.predict_proba(x)[0][1]
@@ -540,7 +602,7 @@ def main():
     parser = argparse.ArgumentParser(description="KOBRA – NBA Game Predictions")
     parser.add_argument("--date", default=datetime.now().strftime("%Y-%m-%d"),
                         help="Datum für Vorhersagen (YYYY-MM-DD)")
-    parser.add_argument("--seasons", nargs="+", type=int, default=[2022, 2023, 2024, 2025],
+    parser.add_argument("--seasons", nargs="+", type=int, default=[2023, 2024, 2025],
                         help="Trainings-Saisons")
     parser.add_argument("--output", default=None,
                         help="Ausgabe-CSV (default: predictions_DATUM.csv)")
