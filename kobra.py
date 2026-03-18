@@ -478,9 +478,17 @@ def berechne_impact_verlust(
 
         if len(match) > 0:
             impact = match.iloc[0]["Impact_Final"]
-            gewicht = 1.0 if "Out" in status else 0.5 if "Doubtful" in status else 0.25
+            if "Out" in status:
+                gewicht = 1.0
+            elif "Doubtful" in status:
+                gewicht = 0.5
+            else:
+                gewicht = 0.0  # Day-to-Day: nur anzeigen, nicht einrechnen
             total_impact += impact * gewicht
-            details.append(f"{name} ({impact:.1f}, {status})")
+            if gewicht > 0:
+                details.append(f"{name} ({impact:.1f}, {status})")
+            else:
+                details.append(f"⚠️ {name} ({impact:.1f}, {status})")
 
     return total_impact, details
 
