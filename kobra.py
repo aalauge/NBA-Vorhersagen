@@ -418,7 +418,7 @@ def lade_verletzungen() -> pd.DataFrame:
 
     df = pd.DataFrame(verletzungen)
     if len(df) > 0:
-        df = df[df["Status"].str.contains("Out|Doubtful", case=False, na=False)]
+        df = df[df["Status"].str.contains("Out|Doubtful|Day-To-Day|Day to Day|DTD", case=False, na=False)]
     log.info(f"{len(df)} verletzte/fragliche Spieler geladen")
     return df
 
@@ -478,7 +478,7 @@ def berechne_impact_verlust(
 
         if len(match) > 0:
             impact = match.iloc[0]["Impact_Final"]
-            gewicht = 1.0 if "Out" in status else 0.5
+            gewicht = 1.0 if "Out" in status else 0.5 if "Doubtful" in status else 0.25
             total_impact += impact * gewicht
             details.append(f"{name} ({impact:.1f}, {status})")
 
