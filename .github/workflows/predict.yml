@@ -58,3 +58,9 @@ jobs:
           git add results/
           git commit -m "🏀 Predictions for ${DATE}"
           git push origin main
+      - name: Telegram Benachrichtigung
+        if: success()
+        env:
+          TELEGRAM_BOT_TOKEN: ${{ secrets.TELEGRAM_BOT_TOKEN }}
+          TELEGRAM_CHAT_IDS: ${{ secrets.TELEGRAM_CHAT_IDS }}
+        run: python notify_telegram.py
