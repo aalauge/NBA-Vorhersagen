@@ -251,6 +251,19 @@ def _avg_pts_weighted(spiele: pd.DataFrame, team: str) -> tuple[float, float]:
     return w_scored / w_total, w_conceded / w_total
 
 
+def _scoring_variance(spiele: pd.DataFrame, team: str) -> float:
+    """Standardabweichung der erzielten Punkte – wie berechenbar ist das Team."""
+    if len(spiele) < 3:
+        return 0.0
+    pts = []
+    for _, r in spiele.iterrows():
+        if r["home_team"] == team:
+            pts.append(r["home_score"])
+        else:
+            pts.append(r["away_score"])
+    return np.std(pts)
+
+
 def berechne_features(df: pd.DataFrame, window: int = FORM_WINDOW) -> pd.DataFrame:
     """Rolling Winrate + Punkte-Features für Heim- und Auswärtsteam."""
     log.info("Berechne Form- und Punkte-Features…")
@@ -279,6 +292,8 @@ def berechne_features(df: pd.DataFrame, window: int = FORM_WINDOW) -> pd.DataFra
             "away_pts_conceded": a_conceded_w,
             "home_home_winrate": _home_winrate(df, heim, datum, window),
             "away_away_winrate": _away_winrate(df, ausw, datum, window),
+            "home_variance": _scoring_variance(h_spiele, heim),
+            "away_variance": _scoring_variance(a_spiele, ausw),
         })
 
     feat_df = pd.DataFrame(records, index=df.index)
@@ -343,6 +358,7 @@ FEATURES = [
     "away_pts_scored", "away_pts_conceded",
     "home_elo", "away_elo",
     "home_home_winrate", "away_away_winrate",
+    "home_variance", "away_variance",
 ]
 
 
@@ -426,6 +442,8 @@ def erstelle_vorhersagen(
             "away_elo": a_elo,
             "home_home_winrate": _home_winrate(df, heim, now, FORM_WINDOW),
             "away_away_winrate": _away_winrate(df, ausw, now, FORM_WINDOW),
+            "home_variance": _scoring_variance(h_spiele, heim),
+            "away_variance": _scoring_variance(a_spiele, ausw),
         }])
 
         prob = model.predict_proba(x)[0][1]
