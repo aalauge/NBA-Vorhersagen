@@ -560,7 +560,7 @@ def main():
     parser = argparse.ArgumentParser(description="KOBRA – NBA Game Predictions")
     parser.add_argument("--date", default=datetime.now().strftime("%Y-%m-%d"),
                         help="Datum für Vorhersagen (YYYY-MM-DD)")
-    parser.add_argument("--seasons", nargs="+", type=int, default=[2022, 2023, 2024, 2025],
+    parser.add_argument("--seasons", nargs="+", type=int, default=[2023, 2024, 2025],
                         help="Trainings-Saisons")
     parser.add_argument("--output", default=None,
                         help="Ausgabe-CSV (default: predictions_DATUM.csv)")
