@@ -27,6 +27,7 @@ import requests
 from bs4 import BeautifulSoup
 from sklearn.linear_model import LogisticRegression
 from sklearn.metrics import accuracy_score
+from fetch_odds import fetch_odds, calculate_ev
 
 # ─── Konfiguration ────────────────────────────────────────────────────────────
 
@@ -528,6 +529,33 @@ def korrigiere_vorhersagen(
 
 # ─── MAIN ─────────────────────────────────────────────────────────────────────
 
+def enrich_with_odds(predictions_df: pd.DataFrame, datum: str) -> pd.DataFrame:
+    odds_path = f"odds/odds_{datum}.csv"
+    if not os.path.exists(odds_path):
+        log.warning(f"[Odds] Keine Quoten-Datei gefunden: {odds_path}")
+        predictions_df["Heim Quote"] = None
+        predictions_df["Ausw Quote"] = None
+        predictions_df["EV"]         = None
+        predictions_df["Edge"]       = None
+        predictions_df["Value Bet"]  = False
+        return predictions_df
+    odds_df = pd.read_csv(odds_path)
+    odds_df = odds_df.rename(columns={"home_team": "Heimteam", "away_team": "Auswärtsteam", "home_odds": "Heim Quote", "away_odds": "Ausw Quote"})
+    merged = predictions_df.merge(odds_df[["Heimteam", "Auswärtsteam", "Heim Quote", "Ausw Quote"]], on=["Heimteam", "Auswärtsteam"], how="left")
+    ev_list, edge_list, value_bet_list = [], [], []
+    for _, row in merged.iterrows():
+        if pd.isna(row.get("Heim Quote")) or pd.isna(row.get("Ausw Quote")):
+            ev_list.append(None); edge_list.append(None); value_bet_list.append(False)
+            continue
+        _, ev, _, edge = calculate_ev(row["Heimsieg %"] / 100, row["Heim Quote"], row["Ausw Quote"])
+        ev_list.append(ev); edge_list.append(edge); value_bet_list.append(ev > 0)
+    merged["EV"] = ev_list
+    merged["Edge"] = edge_list
+    merged["Value Bet"] = value_bet_list
+    log.info(f"[Odds] {merged['Heim Quote'].notna().sum()}/{len(merged)} Spiele mit Quoten angereichert")
+    return merged
+
+
 def main():
     parser = argparse.ArgumentParser(description="KOBRA – NBA Game Predictions")
     parser.add_argument("--date", default=datetime.now().strftime("%Y-%m-%d"),
@@ -594,6 +622,8 @@ def main():
     print(finale_df.to_string(index=False))
 
     # 9) Speichern
+
+    finale_df = enrich_with_odds(finale_df, datum)
     finale_df.to_csv(output, index=False)
     log.info(f"Gespeichert: {output}")
 
