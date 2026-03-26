@@ -29,6 +29,13 @@ jobs:
       - name: Abhängigkeiten installieren
         run: pip install -r requirements.txt
 
+      - name: Quoten holen
+        env:
+          ODDS_API_KEY: ${{ secrets.ODDS_API_KEY }}
+        run: |
+          mkdir -p odds
+          python fetch_odds.py || echo "⚠️ Odds fetch fehlgeschlagen – weiter ohne Quoten"
+
       - name: Vorhersagen erstellen
         env:
           BALLDONTLIE_API_KEY: ${{ secrets.BALLDONTLIE_API_KEY }}
@@ -38,6 +45,13 @@ jobs:
             DATE_ARG="--date ${{ github.event.inputs.date }}"
           fi
           python kobra.py $DATE_ARG --output predictions.csv
+
+      - name: Telegram Benachrichtigung
+        env:
+          TELEGRAM_BOT_TOKEN: ${{ secrets.TELEGRAM_BOT_TOKEN }}
+          TELEGRAM_CHAT_IDS: ${{ secrets.TELEGRAM_CHAT_IDS }}
+        run: |
+          python notify_telegram.py || echo "⚠️ Telegram fehlgeschlagen – weiter"
 
       - name: Ergebnisse als Artifact hochladen
         uses: actions/upload-artifact@v4
@@ -53,6 +67,6 @@ jobs:
           cp predictions.csv "results/predictions_${DATE}.csv"
           git config user.name "github-actions[bot]"
           git config user.email "github-actions[bot]@users.noreply.github.com"
-          git add results/
+          git add results/ odds/
           git diff --staged --quiet || git commit -m "🏀 Predictions for ${DATE}"
           git push
