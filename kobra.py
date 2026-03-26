@@ -92,6 +92,19 @@ TEAM_NAME_MAP = {
 
 FULL_TO_SHORT = {v: k for k, v in TEAM_NAME_MAP.items()}
 
+ABBR_TO_FULL = {
+    "ATL": "Atlanta Hawks", "BOS": "Boston Celtics", "BKN": "Brooklyn Nets",
+    "CHA": "Charlotte Hornets", "CHI": "Chicago Bulls", "CLE": "Cleveland Cavaliers",
+    "DAL": "Dallas Mavericks", "DEN": "Denver Nuggets", "DET": "Detroit Pistons",
+    "GSW": "Golden State Warriors", "HOU": "Houston Rockets", "IND": "Indiana Pacers",
+    "LAC": "LA Clippers", "LAL": "Los Angeles Lakers", "MEM": "Memphis Grizzlies",
+    "MIA": "Miami Heat", "MIL": "Milwaukee Bucks", "MIN": "Minnesota Timberwolves",
+    "NOP": "New Orleans Pelicans", "NYK": "New York Knicks", "OKC": "Oklahoma City Thunder",
+    "ORL": "Orlando Magic", "PHI": "Philadelphia 76ers", "PHX": "Phoenix Suns",
+    "POR": "Portland Trail Blazers", "SAC": "Sacramento Kings", "SAS": "San Antonio Spurs",
+    "TOR": "Toronto Raptors", "UTA": "Utah Jazz", "WAS": "Washington Wizards",
+}
+
 
 # ─── SCHRITT 1: Spieldaten laden ─────────────────────────────────────────────
 
@@ -394,7 +407,8 @@ def erstelle_vorhersagen(spiele, model, df, elo):
 
 # ─── SCHRITT 6: Verletzungen (ESPN) ──────────────────────────────────────────
 
-def lade_verletzungen() -> pd.DataFrame:
+def lade_verletzungen(impact_df=None) -> pd.DataFrame:
+    """Scrapt ESPN Injuries und validiert Team-Zuordnungen gegen player_stats.csv."""
     url = "https://www.espn.com/nba/injuries"
     try:
         r = requests.get(url, headers={"User-Agent": "Mozilla/5.0"}, timeout=15)
@@ -426,14 +440,42 @@ def lade_verletzungen() -> pd.DataFrame:
         log.warning(f"Fehler beim Parsen der ESPN-Daten: {e}")
 
     df = pd.DataFrame(verletzungen)
-    if len(df) > 0:
-        # Out + Doubtful für Korrektur, Day-to-Day nur für Anzeige (⚠️)
-        df = df[df["Status"].str.contains("Out|Doubtful|Day-To-Day", case=False, na=False)]
+    if len(df) == 0:
+        return df
+
+    df = df[df["Status"].str.contains("Out|Doubtful|Day-To-Day", case=False, na=False)].copy()
     log.info(f"{len(df)} verletzte/fragliche Spieler geladen")
+
+    # Team-Validierung gegen player_stats.csv
+    if impact_df is not None and len(impact_df) > 0 and "TEAM_ABBREVIATION" in impact_df.columns:
+        korrigiert = 0
+        for idx, row in df.iterrows():
+            name = row["Spieler"]
+            teile = name.split()
+            if len(teile) >= 2:
+                match = impact_df[
+                    impact_df["PLAYER_NAME"].str.contains(teile[0], case=False, na=False)
+                    & impact_df["PLAYER_NAME"].str.contains(teile[-1], case=False, na=False)
+                ]
+            else:
+                match = impact_df[impact_df["PLAYER_NAME"].str.contains(name, case=False, na=False)]
+
+            if len(match) > 0:
+                csv_team_abbr = match.iloc[0]["TEAM_ABBREVIATION"]
+                csv_team_full = ABBR_TO_FULL.get(csv_team_abbr.upper())
+                if csv_team_full and csv_team_full != row["Team"]:
+                    log.warning(
+                        f"  Team-Korrektur: {name} ESPN={row['Team']} -> Stats={csv_team_full}"
+                    )
+                    df.at[idx, "Team"] = csv_team_full
+                    korrigiert += 1
+
+        if korrigiert > 0:
+            log.info(f"  {korrigiert} Spieler-Team-Zuordnungen korrigiert!")
+
     return df
 
 
-# ─── SCHRITT 7: Spieler Impact Scores ────────────────────────────────────────
 
 def lade_impact_scores() -> pd.DataFrame:
     csv_path = os.path.join(os.path.dirname(os.path.abspath(__file__)), "player_stats.csv")
@@ -623,8 +665,8 @@ def main():
     print(vorhersagen_df.to_string(index=False))
 
     # 7) Verletzungen + Impact
-    verletzungen_df = lade_verletzungen()
     impact_df = lade_impact_scores()
+    verletzungen_df = lade_verletzungen(impact_df)
 
     # 8) Finale Vorhersagen
     if len(verletzungen_df) > 0 and len(impact_df) > 0:
