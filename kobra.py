@@ -603,9 +603,27 @@ def enrich_with_odds(predictions_df, datum):
             edge_list.append(None)
             value_bet_list.append(False)
             continue
-        _, ev, _, edge = calculate_ev(row["Heimsieg %"] / 100, row["Heim Quote"], row["Ausw Quote"])
-        ev_list.append(ev)
-        edge_list.append(edge)
+
+        model_home_prob = row["Heimsieg %"] / 100
+        model_away_prob = 1 - model_home_prob
+
+        # Bookie implied probs (bereinigt um Overround)
+        raw_home = 1 / row["Heim Quote"]
+        raw_away = 1 / row["Ausw Quote"]
+        overround = raw_home + raw_away
+        bookie_home_prob = raw_home / overround
+        bookie_away_prob = raw_away / overround
+
+        # EV und Edge NUR für den getippten Team berechnen
+        if row["Tipp"] == row["Heimteam"]:
+            ev = (model_home_prob * row["Heim Quote"] - 1) * 100
+            edge = model_home_prob - bookie_home_prob
+        else:
+            ev = (model_away_prob * row["Ausw Quote"] - 1) * 100
+            edge = model_away_prob - bookie_away_prob
+
+        ev_list.append(round(ev, 1))
+        edge_list.append(round(edge, 4))
         value_bet_list.append(ev > 0)
 
     merged["EV"] = ev_list
