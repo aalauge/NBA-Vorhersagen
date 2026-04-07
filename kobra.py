@@ -23,6 +23,8 @@ import sys
 import time
 from datetime import datetime
 
+import unicodedata
+
 import numpy as np
 import pandas as pd
 import requests
@@ -452,14 +454,7 @@ def lade_verletzungen(impact_df=None) -> pd.DataFrame:
         abweichungen = 0
         for idx, row in df.iterrows():
             name = row["Spieler"]
-            teile = name.split()
-            if len(teile) >= 2:
-                match = impact_df[
-                    impact_df["PLAYER_NAME"].str.contains(teile[0], case=False, na=False)
-                    & impact_df["PLAYER_NAME"].str.contains(teile[-1], case=False, na=False)
-                ]
-            else:
-                match = impact_df[impact_df["PLAYER_NAME"].str.contains(name, case=False, na=False)]
+            match = _finde_spieler(name, impact_df)
 
             if len(match) > 0:
                 csv_team_abbr = match.iloc[0]["TEAM_ABBREVIATION"]
@@ -492,6 +487,36 @@ def lade_impact_scores() -> pd.DataFrame:
 
 # ─── SCHRITT 8: Verletzungskorrektur ─────────────────────────────────────────
 
+
+# ─── Hilfsfunktion: Akzent-sichere Spieler-Suche ─────────────────────────────
+
+def _normalize_ascii(text: str) -> str:
+    """Entfernt Akzente/Sonderzeichen: Dončić → Doncic, Porziņģis → Porzingis"""
+    return unicodedata.normalize("NFKD", text).encode("ascii", "ignore").decode("ascii")
+
+
+def _finde_spieler(name: str, impact_df: pd.DataFrame) -> pd.DataFrame:
+    """Sucht Spieler in impact_df mit Akzent-Normalisierung."""
+    if len(impact_df) == 0:
+        return pd.DataFrame()
+
+    teile = name.split()
+    if len(teile) < 2:
+        # Einwortiger Name: direkte Suche
+        ascii_name = _normalize_ascii(name).lower()
+        mask = impact_df["PLAYER_NAME"].apply(
+            lambda x: ascii_name in _normalize_ascii(x).lower()
+        )
+        return impact_df[mask]
+
+    first = _normalize_ascii(teile[0]).lower()
+    last = _normalize_ascii(teile[-1]).lower()
+
+    mask = impact_df["PLAYER_NAME"].apply(
+        lambda x: first in _normalize_ascii(x).lower() and last in _normalize_ascii(x).lower()
+    )
+    return impact_df[mask]
+
 def berechne_impact_verlust(team_name, verletzungen_df, impact_df):
     """Out=100%, Doubtful=50%, Day-to-Day=0% (nur Anzeige mit ⚠️).
     Spieler ohne Impact-Score in player_stats.csv werden mit Default-Wert angezeigt."""
@@ -507,18 +532,10 @@ def berechne_impact_verlust(team_name, verletzungen_df, impact_df):
         name = spieler["Spieler"]
         status = spieler["Status"]
 
-        # Impact Score suchen
+        # Impact Score suchen (mit Akzent-Normalisierung)
         impact = None
         if len(impact_df) > 0:
-            teile = name.split()
-            if len(teile) >= 2:
-                match = impact_df[
-                    impact_df["PLAYER_NAME"].str.contains(teile[0], case=False, na=False)
-                    & impact_df["PLAYER_NAME"].str.contains(teile[-1], case=False, na=False)
-                ]
-            else:
-                match = impact_df[impact_df["PLAYER_NAME"].str.contains(name, case=False, na=False)]
-
+            match = _finde_spieler(name, impact_df)
             if len(match) > 0:
                 impact = match.iloc[0]["Impact_Final"]
 
