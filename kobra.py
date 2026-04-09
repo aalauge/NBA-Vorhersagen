@@ -17,16 +17,17 @@ Requirements: see requirements.txt
 """
 
 import argparse
+import io
 import logging
 import os
+import re
 import sys
 import time
 from datetime import datetime
 
-import unicodedata
-
 import numpy as np
 import pandas as pd
+import pdfplumber
 import requests
 from bs4 import BeautifulSoup
 from sklearn.linear_model import LogisticRegression
@@ -407,16 +408,117 @@ def erstelle_vorhersagen(spiele, model, df, elo):
     return pd.DataFrame(vorhersagen)
 
 
-# ─── SCHRITT 6: Verletzungen (ESPN) ──────────────────────────────────────────
+# ─── SCHRITT 6: Verletzungen (NBA PDF + ESPN Fallback) ───────────────────────
 
-def lade_verletzungen(impact_df=None) -> pd.DataFrame:
-    """Scrapt ESPN Injuries und validiert Team-Zuordnungen gegen player_stats.csv."""
+def _lade_nba_pdf(datum: str) -> pd.DataFrame:
+    """
+    Lädt den offiziellen NBA Injury Report als PDF und parst ihn.
+    URL-Muster: https://ak-static.cms.nba.com/referee/injury/Injury-Report_YYYY-MM-DD_HH00PM.pdf
+    Probiert mehrere Zeitstempel durch.
+    Nutzt Text-Extraktion (pdfplumber entfernt Spaces innerhalb von Feldern).
+    """
+    zeitstempel = ["05_00PM", "02_00PM", "01_00PM", "07_00PM", "03_00PM"]
+    base_url = "https://ak-static.cms.nba.com/referee/injury/Injury-Report"
+
+    pdf_bytes = None
+
+    for ts in zeitstempel:
+        url = f"{base_url}_{datum}_{ts}.pdf"
+        try:
+            r = requests.get(url, timeout=15)
+            if r.status_code == 200 and len(r.content) > 500:
+                pdf_bytes = r.content
+                log.info(f"[NBA PDF] Geladen: {url} ({len(r.content)} bytes)")
+                break
+            else:
+                log.debug(f"[NBA PDF] {ts} nicht verfügbar (HTTP {r.status_code})")
+        except requests.RequestException as e:
+            log.debug(f"[NBA PDF] {ts} Fehler: {e}")
+
+    if pdf_bytes is None:
+        log.warning(f"[NBA PDF] Kein Injury Report für {datum} gefunden.")
+        return pd.DataFrame(columns=["Team", "Spieler", "Status"])
+
+    # pdfplumber entfernt Spaces innerhalb von Feldern (z.B. "ChicagoBulls")
+    # Mapping: no-space Version → korrekter Vollname
+    nba_teams = set(TEAM_NAME_MAP.values())
+    nospace_to_full = {t.replace(" ", ""): t for t in nba_teams}
+
+    # Regex: "Nachname,Vorname Status" – OHNE Space nach Komma (pdfplumber-Format)
+    # Behandelt Jr., III, T.J., D'Angelo etc.
+    player_re = re.compile(
+        r"([A-Z][a-zA-Z'\-]+(?:\s?(?:Jr\.|Sr\.|III|II|IV))?),\s*"
+        r"([A-Z][a-zA-Z'\-\.]+(?:\s?[A-Z]\.)?)\s+"
+        r"(Out|Doubtful|Questionable|Probable|Available)\b"
+    )
+
+    # Text aus allen Seiten extrahieren
+    verletzungen = []
+    current_team = None
+
+    try:
+        with pdfplumber.open(io.BytesIO(pdf_bytes)) as pdf:
+            for page in pdf.pages:
+                text = page.extract_text() or ""
+                for line in text.split("\n"):
+                    line = line.strip()
+                    if not line or "NOTYETSUBMITTED" in line.replace(" ", ""):
+                        continue
+                    if "InjuryReport:" in line.replace(" ", "") or "GameDate" in line.replace(" ", ""):
+                        continue
+                    if re.match(r"Page\s*\d+\s*of\s*\d+", line.replace(" ", "")):
+                        continue
+
+                    # Team erkennen (no-space Version, längste zuerst)
+                    for nospace, full in sorted(nospace_to_full.items(), key=lambda x: len(x[0]), reverse=True):
+                        if nospace in line.replace(" ", ""):
+                            current_team = full
+                            break
+
+                    # Spieler + Status erkennen
+                    m = player_re.search(line)
+                    if m and current_team:
+                        last_name = m.group(1)
+                        first_name = m.group(2)
+                        status = m.group(3)
+
+                        # Merged Suffixes bereinigen: "ButlerIII" → "Butler"
+                        last_name = re.sub(r"(III|II|IV|Jr\.|Sr\.)$", "", last_name).strip()
+
+                        verletzungen.append({
+                            "Team": current_team,
+                            "Spieler": f"{first_name} {last_name}",
+                            "Status": status,
+                        })
+
+    except Exception as e:
+        log.warning(f"[NBA PDF] Fehler beim Parsen: {e}")
+        return pd.DataFrame(columns=["Team", "Spieler", "Status"])
+
+    df = pd.DataFrame(verletzungen)
+    if len(df) == 0:
+        log.warning("[NBA PDF] Keine Verletzungen im PDF gefunden.")
+        return df
+
+    # Duplikate entfernen (Spieler kann in mehreren Matchups stehen)
+    df = df.drop_duplicates(subset=["Team", "Spieler"], keep="last")
+
+    log.info(f"[NBA PDF] {len(df)} Spieler geparst "
+             f"(Out: {(df['Status'] == 'Out').sum()}, "
+             f"Doubtful: {(df['Status'] == 'Doubtful').sum()}, "
+             f"Questionable: {(df['Status'] == 'Questionable').sum()}, "
+             f"Probable: {(df['Status'] == 'Probable').sum()})")
+    return df
+
+
+def _lade_espn_verletzungen() -> pd.DataFrame:
+    """Fallback: ESPN Injuries scrapen (bisherige Logik)."""
     url = "https://www.espn.com/nba/injuries"
     try:
         r = requests.get(url, headers={"User-Agent": "Mozilla/5.0"}, timeout=15)
         r.raise_for_status()
     except requests.RequestException as e:
-        log.warning(f"ESPN-Verletzungen konnten nicht geladen werden: {e}")
+        log.warning(f"[ESPN] Verletzungen konnten nicht geladen werden: {e}")
         return pd.DataFrame(columns=["Team", "Spieler", "Status"])
 
     soup = BeautifulSoup(r.text, "html.parser")
@@ -439,34 +541,71 @@ def lade_verletzungen(impact_df=None) -> pd.DataFrame:
                         "Status": cols[3].text.strip(),
                     })
     except Exception as e:
-        log.warning(f"Fehler beim Parsen der ESPN-Daten: {e}")
+        log.warning(f"[ESPN] Fehler beim Parsen: {e}")
 
     df = pd.DataFrame(verletzungen)
     if len(df) == 0:
         return df
 
     df = df[df["Status"].str.contains("Out|Doubtful|Day-To-Day", case=False, na=False)].copy()
-    log.info(f"{len(df)} verletzte/fragliche Spieler geladen")
+    log.info(f"[ESPN] {len(df)} verletzte/fragliche Spieler geladen")
+    return df
 
-    # Nur Logging: Abweichungen zwischen ESPN und player_stats.csv melden (NICHT überschreiben!)
-    # ESPN ist die Echtzeit-Quelle – player_stats.csv kann bei Trades veraltet sein.
+
+def lade_verletzungen(impact_df=None, datum=None) -> pd.DataFrame:
+    """
+    Lädt Verletzungsdaten: NBA Official Injury Report (PDF) mit ESPN-Fallback.
+    Validiert Team-Zuordnungen gegen player_stats.csv.
+    """
+    if datum is None:
+        datum = datetime.now().strftime("%Y-%m-%d")
+
+    # 1) Versuche NBA Official PDF
+    df = _lade_nba_pdf(datum)
+
+    # 2) Fallback auf ESPN wenn PDF leer oder fehlgeschlagen
+    if len(df) == 0:
+        log.info("[Injuries] NBA PDF leer/nicht verfügbar – Fallback auf ESPN…")
+        df = _lade_espn_verletzungen()
+
+    if len(df) == 0:
+        log.warning("[Injuries] Keine Verletzungsdaten aus beiden Quellen.")
+        return pd.DataFrame(columns=["Team", "Spieler", "Status"])
+
+    # Probable und Available rausfiltern (die spielen)
+    df = df[~df["Status"].str.contains("Available|Probable", case=False, na=False)].copy()
+
+    # Questionable → Day-To-Day (nur Anzeige, kein Penalty)
+    df["Status"] = df["Status"].replace({"Questionable": "Day-To-Day"})
+
+    log.info(f"[Injuries] {len(df)} relevante Spieler nach Filter")
+
+    # Team-Validierung gegen player_stats.csv
     if impact_df is not None and len(impact_df) > 0 and "TEAM_ABBREVIATION" in impact_df.columns:
-        abweichungen = 0
+        korrigiert = 0
         for idx, row in df.iterrows():
             name = row["Spieler"]
-            match = _finde_spieler(name, impact_df)
+            teile = name.split()
+            if len(teile) >= 2:
+                match = impact_df[
+                    impact_df["PLAYER_NAME"].str.contains(teile[0], case=False, na=False)
+                    & impact_df["PLAYER_NAME"].str.contains(teile[-1], case=False, na=False)
+                ]
+            else:
+                match = impact_df[impact_df["PLAYER_NAME"].str.contains(name, case=False, na=False)]
 
             if len(match) > 0:
                 csv_team_abbr = match.iloc[0]["TEAM_ABBREVIATION"]
                 csv_team_full = ABBR_TO_FULL.get(csv_team_abbr.upper())
                 if csv_team_full and csv_team_full != row["Team"]:
-                    log.info(
-                        f"  Team-Abweichung (nicht korrigiert): {name} ESPN={row['Team']} vs Stats={csv_team_full}"
+                    log.warning(
+                        f"  Team-Korrektur: {name} Source={row['Team']} -> Stats={csv_team_full}"
                     )
-                    abweichungen += 1
+                    df.at[idx, "Team"] = csv_team_full
+                    korrigiert += 1
 
-        if abweichungen > 0:
-            log.info(f"  {abweichungen} Abweichungen ESPN vs Stats (ESPN wird vertraut)")
+        if korrigiert > 0:
+            log.info(f"  {korrigiert} Spieler-Team-Zuordnungen korrigiert!")
 
     return df
 
@@ -487,76 +626,44 @@ def lade_impact_scores() -> pd.DataFrame:
 
 # ─── SCHRITT 8: Verletzungskorrektur ─────────────────────────────────────────
 
-
-# ─── Hilfsfunktion: Akzent-sichere Spieler-Suche ─────────────────────────────
-
-def _normalize_ascii(text: str) -> str:
-    """Entfernt Akzente/Sonderzeichen: Dončić → Doncic, Porziņģis → Porzingis"""
-    return unicodedata.normalize("NFKD", text).encode("ascii", "ignore").decode("ascii")
-
-
-def _finde_spieler(name: str, impact_df: pd.DataFrame) -> pd.DataFrame:
-    """Sucht Spieler in impact_df mit Akzent-Normalisierung."""
-    if len(impact_df) == 0:
-        return pd.DataFrame()
-
-    teile = name.split()
-    if len(teile) < 2:
-        # Einwortiger Name: direkte Suche
-        ascii_name = _normalize_ascii(name).lower()
-        mask = impact_df["PLAYER_NAME"].apply(
-            lambda x: ascii_name in _normalize_ascii(x).lower()
-        )
-        return impact_df[mask]
-
-    first = _normalize_ascii(teile[0]).lower()
-    last = _normalize_ascii(teile[-1]).lower()
-
-    mask = impact_df["PLAYER_NAME"].apply(
-        lambda x: first in _normalize_ascii(x).lower() and last in _normalize_ascii(x).lower()
-    )
-    return impact_df[mask]
-
 def berechne_impact_verlust(team_name, verletzungen_df, impact_df):
-    """Out=100%, Doubtful=50%, Day-to-Day=0% (nur Anzeige mit ⚠️).
-    Spieler ohne Impact-Score in player_stats.csv werden mit Default-Wert angezeigt."""
-    if len(verletzungen_df) == 0:
+    """Out=100%, Doubtful=50%, Day-to-Day=0% (nur Anzeige mit ⚠️)."""
+    if len(verletzungen_df) == 0 or len(impact_df) == 0:
         return 0.0, []
 
     verletzt = verletzungen_df[verletzungen_df["Team"] == team_name]
     total_impact = 0.0
     details = []
-    DEFAULT_IMPACT = 3.0  # Konservativer Default für unbekannte Spieler
 
     for _, spieler in verletzt.iterrows():
         name = spieler["Spieler"]
         status = spieler["Status"]
 
-        # Impact Score suchen (mit Akzent-Normalisierung)
-        impact = None
-        if len(impact_df) > 0:
-            match = _finde_spieler(name, impact_df)
-            if len(match) > 0:
-                impact = match.iloc[0]["Impact_Final"]
-
-        # Fallback: Default-Impact für unbekannte Spieler
-        if impact is None:
-            impact = DEFAULT_IMPACT
-            log.warning(f"  Kein Impact-Score für {name} ({team_name}) – verwende Default {DEFAULT_IMPACT}")
-
-        if "Out" in status:
-            gewicht = 1.0
-        elif "Doubtful" in status:
-            gewicht = 0.5
+        teile = name.split()
+        if len(teile) >= 2:
+            match = impact_df[
+                impact_df["PLAYER_NAME"].str.contains(teile[0], case=False, na=False)
+                & impact_df["PLAYER_NAME"].str.contains(teile[-1], case=False, na=False)
+            ]
         else:
-            gewicht = 0.0  # Day-to-Day: kein Impact, nur Anzeige
+            match = impact_df[impact_df["PLAYER_NAME"].str.contains(name, case=False, na=False)]
 
-        total_impact += impact * gewicht
+        if len(match) > 0:
+            impact = match.iloc[0]["Impact_Final"]
 
-        if "Day-To-Day" in status:
-            details.append(f"⚠️ {name} ({impact:.1f}, {status})")
-        else:
-            details.append(f"{name} ({impact:.1f}, {status})")
+            if "Out" in status:
+                gewicht = 1.0
+            elif "Doubtful" in status:
+                gewicht = 0.5
+            else:
+                gewicht = 0.0  # Day-to-Day: kein Impact, nur Anzeige
+
+            total_impact += impact * gewicht
+
+            if "Day-To-Day" in status:
+                details.append(f"⚠️ {name} ({impact:.1f}, {status})")
+            else:
+                details.append(f"{name} ({impact:.1f}, {status})")
 
     return total_impact, details
 
@@ -630,27 +737,9 @@ def enrich_with_odds(predictions_df, datum):
             edge_list.append(None)
             value_bet_list.append(False)
             continue
-
-        model_home_prob = row["Heimsieg %"] / 100
-        model_away_prob = 1 - model_home_prob
-
-        # Bookie implied probs (bereinigt um Overround)
-        raw_home = 1 / row["Heim Quote"]
-        raw_away = 1 / row["Ausw Quote"]
-        overround = raw_home + raw_away
-        bookie_home_prob = raw_home / overround
-        bookie_away_prob = raw_away / overround
-
-        # EV und Edge NUR für den getippten Team berechnen
-        if row["Tipp"] == row["Heimteam"]:
-            ev = (model_home_prob * row["Heim Quote"] - 1) * 100
-            edge = model_home_prob - bookie_home_prob
-        else:
-            ev = (model_away_prob * row["Ausw Quote"] - 1) * 100
-            edge = model_away_prob - bookie_away_prob
-
-        ev_list.append(round(ev, 1))
-        edge_list.append(round(edge, 4))
+        _, ev, _, edge = calculate_ev(row["Heimsieg %"] / 100, row["Heim Quote"], row["Ausw Quote"])
+        ev_list.append(ev)
+        edge_list.append(edge)
         value_bet_list.append(ev > 0)
 
     merged["EV"] = ev_list
@@ -711,7 +800,7 @@ def main():
 
     # 7) Verletzungen + Impact
     impact_df = lade_impact_scores()
-    verletzungen_df = lade_verletzungen(impact_df)
+    verletzungen_df = lade_verletzungen(impact_df, datum=datum)
 
     # 8) Finale Vorhersagen
     if len(verletzungen_df) > 0 and len(impact_df) > 0:
