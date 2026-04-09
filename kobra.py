@@ -25,6 +25,8 @@ import sys
 import time
 from datetime import datetime
 
+import unicodedata
+
 import numpy as np
 import pandas as pd
 import pdfplumber
@@ -410,6 +412,44 @@ def erstelle_vorhersagen(spiele, model, df, elo):
 
 # ─── SCHRITT 6: Verletzungen (NBA PDF + ESPN Fallback) ───────────────────────
 
+def _normalize_ascii(name: str) -> str:
+    """Entfernt Akzente/Diakritika: Dončić → Doncic, Porziņģis → Porzingis."""
+    nfkd = unicodedata.normalize("NFKD", name)
+    return "".join(c for c in nfkd if not unicodedata.combining(c))
+
+
+def _finde_spieler(name: str, impact_df: pd.DataFrame) -> pd.DataFrame:
+    """Sucht Spieler in impact_df – erst exakt, dann ASCII-normalisiert."""
+    if len(impact_df) == 0:
+        return pd.DataFrame()
+
+    teile = name.split()
+    if len(teile) >= 2:
+        match = impact_df[
+            impact_df["PLAYER_NAME"].str.contains(teile[0], case=False, na=False)
+            & impact_df["PLAYER_NAME"].str.contains(teile[-1], case=False, na=False)
+        ]
+    else:
+        match = impact_df[impact_df["PLAYER_NAME"].str.contains(name, case=False, na=False)]
+
+    if len(match) > 0:
+        return match
+
+    # Fallback: ASCII-normalisiert suchen (Dončić → Doncic)
+    norm_name = _normalize_ascii(name)
+    norm_teile = norm_name.split()
+    norm_names = impact_df["PLAYER_NAME"].apply(_normalize_ascii)
+
+    if len(norm_teile) >= 2:
+        match = impact_df[
+            norm_names.str.contains(norm_teile[0], case=False, na=False)
+            & norm_names.str.contains(norm_teile[-1], case=False, na=False)
+        ]
+    else:
+        match = impact_df[norm_names.str.contains(norm_name, case=False, na=False)]
+
+    return match
+
 def _lade_nba_pdf(datum: str) -> pd.DataFrame:
     """
     Lädt den offiziellen NBA Injury Report als PDF und parst ihn.
@@ -580,32 +620,25 @@ def lade_verletzungen(impact_df=None, datum=None) -> pd.DataFrame:
 
     log.info(f"[Injuries] {len(df)} relevante Spieler nach Filter")
 
-    # Team-Validierung gegen player_stats.csv
+    # Nur Logging: Abweichungen zwischen Quelle und player_stats.csv melden (NICHT überschreiben!)
+    # NBA PDF / ESPN ist die Echtzeit-Quelle – player_stats.csv kann bei Trades veraltet sein.
     if impact_df is not None and len(impact_df) > 0 and "TEAM_ABBREVIATION" in impact_df.columns:
-        korrigiert = 0
+        abweichungen = 0
         for idx, row in df.iterrows():
             name = row["Spieler"]
-            teile = name.split()
-            if len(teile) >= 2:
-                match = impact_df[
-                    impact_df["PLAYER_NAME"].str.contains(teile[0], case=False, na=False)
-                    & impact_df["PLAYER_NAME"].str.contains(teile[-1], case=False, na=False)
-                ]
-            else:
-                match = impact_df[impact_df["PLAYER_NAME"].str.contains(name, case=False, na=False)]
+            match = _finde_spieler(name, impact_df)
 
             if len(match) > 0:
                 csv_team_abbr = match.iloc[0]["TEAM_ABBREVIATION"]
                 csv_team_full = ABBR_TO_FULL.get(csv_team_abbr.upper())
                 if csv_team_full and csv_team_full != row["Team"]:
-                    log.warning(
-                        f"  Team-Korrektur: {name} Source={row['Team']} -> Stats={csv_team_full}"
+                    log.info(
+                        f"  Team-Abweichung (nicht korrigiert): {name} Source={row['Team']} vs Stats={csv_team_full}"
                     )
-                    df.at[idx, "Team"] = csv_team_full
-                    korrigiert += 1
+                    abweichungen += 1
 
-        if korrigiert > 0:
-            log.info(f"  {korrigiert} Spieler-Team-Zuordnungen korrigiert!")
+        if abweichungen > 0:
+            log.info(f"  {abweichungen} Abweichungen Quelle vs Stats (Quelle wird vertraut)")
 
     return df
 
@@ -627,43 +660,44 @@ def lade_impact_scores() -> pd.DataFrame:
 # ─── SCHRITT 8: Verletzungskorrektur ─────────────────────────────────────────
 
 def berechne_impact_verlust(team_name, verletzungen_df, impact_df):
-    """Out=100%, Doubtful=50%, Day-to-Day=0% (nur Anzeige mit ⚠️)."""
-    if len(verletzungen_df) == 0 or len(impact_df) == 0:
+    """Out=100%, Doubtful=50%, Day-to-Day=0% (nur Anzeige mit ⚠️).
+    Spieler ohne Impact-Score in player_stats.csv werden mit Default-Wert angezeigt."""
+    if len(verletzungen_df) == 0:
         return 0.0, []
 
     verletzt = verletzungen_df[verletzungen_df["Team"] == team_name]
     total_impact = 0.0
     details = []
+    DEFAULT_IMPACT = 3.0  # Konservativer Default für unbekannte Spieler
 
     for _, spieler in verletzt.iterrows():
         name = spieler["Spieler"]
         status = spieler["Status"]
 
-        teile = name.split()
-        if len(teile) >= 2:
-            match = impact_df[
-                impact_df["PLAYER_NAME"].str.contains(teile[0], case=False, na=False)
-                & impact_df["PLAYER_NAME"].str.contains(teile[-1], case=False, na=False)
-            ]
-        else:
-            match = impact_df[impact_df["PLAYER_NAME"].str.contains(name, case=False, na=False)]
-
+        # Impact Score suchen (mit Unicode-Normalisierung)
+        impact = None
+        match = _finde_spieler(name, impact_df)
         if len(match) > 0:
             impact = match.iloc[0]["Impact_Final"]
 
-            if "Out" in status:
-                gewicht = 1.0
-            elif "Doubtful" in status:
-                gewicht = 0.5
-            else:
-                gewicht = 0.0  # Day-to-Day: kein Impact, nur Anzeige
+        # Fallback: Default-Impact für unbekannte Spieler
+        if impact is None:
+            impact = DEFAULT_IMPACT
+            log.warning(f"  Kein Impact-Score für {name} ({team_name}) – verwende Default {DEFAULT_IMPACT}")
 
-            total_impact += impact * gewicht
+        if "Out" in status:
+            gewicht = 1.0
+        elif "Doubtful" in status:
+            gewicht = 0.5
+        else:
+            gewicht = 0.0  # Day-to-Day: kein Impact, nur Anzeige
 
-            if "Day-To-Day" in status:
-                details.append(f"⚠️ {name} ({impact:.1f}, {status})")
-            else:
-                details.append(f"{name} ({impact:.1f}, {status})")
+        total_impact += impact * gewicht
+
+        if "Day-To-Day" in status:
+            details.append(f"⚠️ {name} ({impact:.1f}, {status})")
+        else:
+            details.append(f"{name} ({impact:.1f}, {status})")
 
     return total_impact, details
 
