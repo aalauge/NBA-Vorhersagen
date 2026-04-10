@@ -457,7 +457,15 @@ def _lade_nba_pdf(datum: str) -> pd.DataFrame:
     Probiert mehrere Zeitstempel durch.
     Nutzt Text-Extraktion (pdfplumber entfernt Spaces innerhalb von Feldern).
     """
-    zeitstempel = ["05_00PM", "02_00PM", "01_00PM", "07_00PM", "03_00PM"]
+    # NBA Injury Reports werden zu mehreren Zeiten am Spieltag veröffentlicht.
+    # Wir probieren vom spätesten (neuesten) zum frühesten.
+    zeitstempel = [
+        "08_30PM", "07_30PM", "07_00PM", "06_30PM", "06_00PM",
+        "05_30PM", "05_00PM", "04_30PM", "04_00PM", "03_30PM",
+        "03_00PM", "02_30PM", "02_00PM", "01_30PM", "01_00PM",
+        "12_30PM", "12_00PM", "11_30AM", "11_00AM",
+        "12_00AM",  # Mitternacht des Spieltags – meist erster Report mit vielen NOT YET SUBMITTED
+    ]
     base_url = "https://ak-static.cms.nba.com/referee/injury/Injury-Report"
 
     pdf_bytes = None
@@ -484,11 +492,13 @@ def _lade_nba_pdf(datum: str) -> pd.DataFrame:
     nba_teams = set(TEAM_NAME_MAP.values())
     nospace_to_full = {t.replace(" ", ""): t for t in nba_teams}
 
-    # Regex: "Nachname,Vorname Status" – OHNE Space nach Komma (pdfplumber-Format)
+    # Regex: "Nachname, Vorname Status"
+    # Unterstützt Multi-Word-Nachnamen (z.B. "Jones Garcia, David")
+    # und Multi-Word-Vornamen (z.B. "Niederhauser, Yanic Konan")
     # Behandelt Jr., III, T.J., D'Angelo etc.
     player_re = re.compile(
-        r"([A-Z][a-zA-Z'\-]+(?:\s?(?:Jr\.|Sr\.|III|II|IV))?),\s*"
-        r"([A-Z][a-zA-Z'\-\.]+(?:\s?[A-Z]\.)?)\s+"
+        r"([A-Z][a-zA-Z'\-]+(?:\s+[A-Z][a-zA-Z'\-]+)?(?:\s?(?:Jr\.|Sr\.|III|II|IV))?),\s*"
+        r"([A-Z][a-zA-Z'\-\.]+(?:\s+[A-Z][a-zA-Z'\-\.]+)?(?:\s?[A-Z]\.)?)\s+"
         r"(Out|Doubtful|Questionable|Probable|Available)\b"
     )
 
@@ -851,7 +861,7 @@ def main():
     print(finale_df.to_string(index=False))
 
     # 9) Quoten anreichern + Speichern
-    finale_df = enrich_with_odds(finale_df, datum)
+    # finale_df = enrich_with_odds(finale_df, datum)  # deaktiviert
     finale_df.to_csv(output, index=False)
     log.info(f"Gespeichert: {output}")
 
