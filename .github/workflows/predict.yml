@@ -1,9 +1,10 @@
 name: KOBRA – Daily NBA Predictions
 
 on:
-  # Täglich um 14:00 UTC (Spiele starten meist abends US-Zeit)
+  # Täglich um 18:00 UTC (Spiele starten meist abends US-Zeit)
   schedule:
-    - cron: "0 14 * * *"
+    - cron: "0 8 * * *"
+    - cron: "0 18 * * *"
   # Manuell auslösbar
   workflow_dispatch:
     inputs:
@@ -52,6 +53,11 @@ jobs:
           TELEGRAM_CHAT_IDS: ${{ secrets.TELEGRAM_CHAT_IDS }}
         run: |
           python notify_telegram.py || echo "⚠️ Telegram fehlgeschlagen – weiter"
+
+      - name: Discord Vorhersage
+        env:
+          DISCORD_WEBHOOK_FREE: ${{ secrets.DISCORD_WEBHOOK_FREE }}
+        run: python notify_discord.py --morgens --predictions predictions.csv
 
       - name: Ergebnisse als Artifact hochladen
         uses: actions/upload-artifact@v4
