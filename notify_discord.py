@@ -126,6 +126,8 @@ def sende_abend(df: pd.DataFrame, odds_df: pd.DataFrame, datum: str,
     merged["EV"] = (merged["Konfidenz"] / 100 * merged["Quote"] - 1) * 100
     merged["EV"] = merged["EV"].round(1)
     merged["Tier"] = merged.apply(lambda r: klassifiziere_tier(r["EV"], r["Quote"]), axis=1)
+    merged["Mindestquote"] = (1 / (merged["Konfidenz"] / 100)).round(2)
+    merged["Mindestquote"] = (1 / (merged["Konfidenz"] / 100)).round(2)
 
     # ─── Free: Finale Vorhersage ───
     free_lines = []
@@ -169,7 +171,8 @@ def sende_abend(df: pd.DataFrame, odds_df: pd.DataFrame, datum: str,
 
             strong_lines.append(f"**PICK #{pick_nr}  ·  🔥 STRONG VALUE**")
             strong_lines.append(f"**{tipp}**")
-            strong_lines.append(f"vs {gegner}  ·  Quote {row['Quote']:.2f}  ·  EV +{row['EV']:.1f}%")
+            strong_lines.append(f"vs {gegner}  ·  Winamax {row['Quote']:.2f}  ·  EV +{row['EV']:.1f}%")
+            strong_lines.append(f"→ Value ab Quote ≥ {row['Mindestquote']:.2f}")
             strong_lines.append("")
             pick_nr += 1
 
@@ -190,7 +193,8 @@ def sende_abend(df: pd.DataFrame, odds_df: pd.DataFrame, datum: str,
 
             vb_lines.append(f"**PICK #{pick_nr}  ·  ✅ VALUE BET**")
             vb_lines.append(f"**{tipp}**")
-            vb_lines.append(f"vs {gegner}  ·  Quote {row['Quote']:.2f}  ·  EV +{row['EV']:.1f}%")
+            vb_lines.append(f"vs {gegner}  ·  Winamax {row['Quote']:.2f}  ·  EV +{row['EV']:.1f}%")
+            vb_lines.append(f"→ Value ab Quote ≥ **{row['Mindestquote']:.2f}**")
             vb_lines.append("")
             pick_nr += 1
 
@@ -209,8 +213,9 @@ def sende_abend(df: pd.DataFrame, odds_df: pd.DataFrame, datum: str,
             tipp = short(row["Tipp"])
             gegner = short(row["Auswärtsteam"] if row["Tipp"] == row["Heimteam"] else row["Heimteam"])
 
+            mq = 1 / (row["Konfidenz"] / 100) if row["Konfidenz"] > 0 else 99
             skip_lines.append(f"~~{tipp} vs {gegner}~~")
-            skip_lines.append(f"→ {skip_grund(row['EV'], row['Quote'])}")
+            skip_lines.append(f"Mindestquote {mq:.2f}  ·  {skip_grund(row['EV'], row['Quote'])}")
             skip_lines.append("")
 
         premium_embeds.append({
