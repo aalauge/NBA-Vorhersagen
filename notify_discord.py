@@ -91,7 +91,33 @@ def sende_fruehprognose(df: pd.DataFrame, datum: str, webhook_free: str):
         print("❌ Frühprognose fehlgeschlagen")
 
 
+# ─── Tier-Konstanten ─────────────────────────────────────────────────────────
+
+MIN_QUOTE = 1.25       # Mindestquote für Value Bets
+STRONG_EV_THRESHOLD = 10.0  # EV >= 10% = Strong Value
+
+
 # ─── Abends: Finale Vorhersage (Free) + Value Bets (Premium) ─────────────────
+
+def klassifiziere_tier(ev: float, quote: float) -> str:
+    """Bestimmt den Tier eines Spiels basierend auf EV und Quote."""
+    if pd.isna(ev) or pd.isna(quote) or quote == 0:
+        return "skip"
+    if ev > 0 and quote >= MIN_QUOTE and ev >= STRONG_EV_THRESHOLD:
+        return "strong"
+    if ev > 0 and quote >= MIN_QUOTE:
+        return "value"
+    return "skip"
+
+
+def skip_grund(ev: float, quote: float) -> str:
+    """Gibt den Skip-Grund als kurzen Text zurück."""
+    if pd.isna(quote) or quote == 0:
+        return "Keine Quote verfügbar"
+    if quote < MIN_QUOTE:
+        return f"Quote {quote:.2f}  ·  Quote zu niedrig (<{MIN_QUOTE})"
+    return f"Quote {quote:.2f}  ·  EV {ev:.1f}%  →  Negativer EV"
+
 
 def sende_abend(df: pd.DataFrame, odds_df: pd.DataFrame, datum: str,
                 webhook_free: str, webhook_premium: str):
@@ -99,7 +125,7 @@ def sende_abend(df: pd.DataFrame, odds_df: pd.DataFrame, datum: str,
     merged = df.merge(odds_df, on="Heimteam", how="left")
     merged["EV"] = (merged["Konfidenz"] / 100 * merged["Quote"] - 1) * 100
     merged["EV"] = merged["EV"].round(1)
-    merged["Value_Bet"] = merged["EV"] > 0
+    merged["Tier"] = merged.apply(lambda r: klassifiziere_tier(r["EV"], r["Quote"]), axis=1)
 
     # ─── Free: Finale Vorhersage ───
     free_lines = []
@@ -126,31 +152,57 @@ def sende_abend(df: pd.DataFrame, odds_df: pd.DataFrame, datum: str,
     else:
         print("❌ Finale Vorhersage fehlgeschlagen")
 
-    # ─── Premium: Value Bets + Skips ───
-    value_bets = merged[merged["Value_Bet"] == True]
-    skips = merged[merged["Value_Bet"] == False]
+    # ─── Premium: Strong Value + Value Bets + Skips ───
+    strong_bets = merged[merged["Tier"] == "strong"]
+    value_bets = merged[merged["Tier"] == "value"]
+    skips = merged[merged["Tier"] == "skip"]
 
     premium_embeds = []
+    pick_nr = 1
 
-    if len(value_bets) > 0:
-        vb_lines = []
-        for i, (_, row) in enumerate(value_bets.iterrows(), 1):
+    # 🔥 Strong Value Embed
+    if len(strong_bets) > 0:
+        strong_lines = []
+        for _, row in strong_bets.iterrows():
             tipp = short(row["Tipp"])
             gegner = short(row["Auswärtsteam"] if row["Tipp"] == row["Heimteam"] else row["Heimteam"])
 
-            vb_lines.append(f"**VALUE BET #{i}**")
+            strong_lines.append(f"**PICK #{pick_nr}  ·  🔥 STRONG VALUE**")
+            strong_lines.append(f"**{tipp}**")
+            strong_lines.append(f"vs {gegner}  ·  Quote {row['Quote']:.2f}  ·  EV +{row['EV']:.1f}%")
+            strong_lines.append("")
+            pick_nr += 1
+
+        premium_embeds.append({
+            "color": 0xFF9500,
+            "author": {"name": "🐍 KOBRA Picks"},
+            "title": f"🔥  Strong Value  ·  {datum}",
+            "description": "\n".join(strong_lines).strip(),
+            "footer": {"text": f"{len(strong_bets)} Strong Value Picks  ·  EV ≥ {STRONG_EV_THRESHOLD:.0f}%"},
+        })
+
+    # ✅ Value Bet Embed
+    if len(value_bets) > 0:
+        vb_lines = []
+        for _, row in value_bets.iterrows():
+            tipp = short(row["Tipp"])
+            gegner = short(row["Auswärtsteam"] if row["Tipp"] == row["Heimteam"] else row["Heimteam"])
+
+            vb_lines.append(f"**PICK #{pick_nr}  ·  ✅ VALUE BET**")
             vb_lines.append(f"**{tipp}**")
             vb_lines.append(f"vs {gegner}  ·  Quote {row['Quote']:.2f}  ·  EV +{row['EV']:.1f}%")
             vb_lines.append("")
+            pick_nr += 1
 
         premium_embeds.append({
             "color": 0x57F287,
             "author": {"name": "🐍 KOBRA Picks"},
             "title": f"✅  Value Bets  ·  {datum}",
             "description": "\n".join(vb_lines).strip(),
-            "footer": {"text": f"{len(value_bets)} Value Bets aus {len(merged)} Spielen"},
+            "footer": {"text": f"{len(value_bets)} Value Bets  ·  EV 0–{STRONG_EV_THRESHOLD:.0f}%"},
         })
 
+    # ⛔ Skip Embed
     if len(skips) > 0:
         skip_lines = []
         for _, row in skips.iterrows():
@@ -158,13 +210,7 @@ def sende_abend(df: pd.DataFrame, odds_df: pd.DataFrame, datum: str,
             gegner = short(row["Auswärtsteam"] if row["Tipp"] == row["Heimteam"] else row["Heimteam"])
 
             skip_lines.append(f"~~{tipp} vs {gegner}~~")
-
-            if pd.isna(row.get("Quote")) or row.get("Quote", 0) == 0:
-                skip_lines.append("→ Keine Quote verfügbar")
-            elif row["Quote"] < 1.25:
-                skip_lines.append(f"Quote {row['Quote']:.2f}  ·  EV {row['EV']:.1f}%  →  Quote zu niedrig")
-            else:
-                skip_lines.append(f"Quote {row['Quote']:.2f}  ·  EV {row['EV']:.1f}%  →  Negativer EV")
+            skip_lines.append(f"→ {skip_grund(row['EV'], row['Quote'])}")
             skip_lines.append("")
 
         premium_embeds.append({
@@ -173,11 +219,12 @@ def sende_abend(df: pd.DataFrame, odds_df: pd.DataFrame, datum: str,
             "description": "\n".join(skip_lines).strip(),
         })
 
+    # Senden
     if len(premium_embeds) > 0:
-        vb_count = len(value_bets)
+        total_picks = len(strong_bets) + len(value_bets)
         total = len(merged)
         if sende_discord(webhook_premium, premium_embeds):
-            print(f"✅ Premium Picks gesendet ({vb_count} Value Bets, {total - vb_count} Skips)")
+            print(f"✅ Premium Picks gesendet ({len(strong_bets)} Strong, {len(value_bets)} Value, {len(skips)} Skips)")
         else:
             print("❌ Premium Picks fehlgeschlagen")
     else:

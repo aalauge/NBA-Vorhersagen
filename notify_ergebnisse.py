@@ -72,6 +72,22 @@ def sende_discord(webhook_url: str, embeds: list[dict]) -> bool:
         return False
 
 
+# ─── Tier-Konstanten ─────────────────────────────────────────────────────────
+
+MIN_QUOTE = 1.25
+STRONG_EV_THRESHOLD = 10.0
+
+
+def klassifiziere_tier(ev, quote) -> str:
+    if pd.isna(ev) or pd.isna(quote) or quote == 0:
+        return "skip"
+    if ev > 0 and quote >= MIN_QUOTE and ev >= STRONG_EV_THRESHOLD:
+        return "strong"
+    if ev > 0 and quote >= MIN_QUOTE:
+        return "value"
+    return "skip"
+
+
 # ─── Ergebnisse formatieren und senden ────────────────────────────────────────
 
 def sende_ergebnisse(predictions_df: pd.DataFrame, ergebnisse: list[dict],
@@ -86,23 +102,23 @@ def sende_ergebnisse(predictions_df: pd.DataFrame, ergebnisse: list[dict],
         winner = heim if h_score > a_score else spiel["visitor_team"]["full_name"]
         results[heim] = {"home_score": h_score, "away_score": a_score, "winner": winner}
 
-    # Merge predictions mit odds
+    # Merge predictions mit odds + Tier berechnen
     if odds_df is not None and len(odds_df) > 0:
         merged = predictions_df.merge(odds_df, on="Heimteam", how="left")
         merged["EV"] = (merged["Konfidenz"] / 100 * merged["Quote"] - 1) * 100
-        merged["is_vb"] = merged["EV"] > 0
+        merged["Tier"] = merged.apply(lambda r: klassifiziere_tier(r["EV"], r["Quote"]), axis=1)
     else:
         merged = predictions_df.copy()
         merged["Quote"] = None
         merged["EV"] = None
-        merged["is_vb"] = False
+        merged["Tier"] = "skip"
 
+    strong_lines = []
     vb_lines = []
     rest_lines = []
-    vb_correct = 0
-    vb_total = 0
-    all_correct = 0
-    all_total = 0
+    strong_correct, strong_total = 0, 0
+    vb_correct, vb_total = 0, 0
+    all_correct, all_total = 0, 0
 
     for _, row in merged.iterrows():
         heim_full = row["Heimteam"]
@@ -125,18 +141,32 @@ def sende_ergebnisse(predictions_df: pd.DataFrame, ergebnisse: list[dict],
             all_correct += 1
 
         score_str = f"{h_score} – {a_score}"
+        tier = row["Tier"]
 
-        if row["is_vb"]:
-            vb_total += 1
-            if richtig:
-                vb_correct += 1
-                profit = (row["Quote"] - 1) * 10
-                vb_lines.append(f"✅  **{heim}** {score_str} **{ausw}**")
-                vb_lines.append(f"      Pick: {short(tipp)}  ·  +{profit:.2f} EUR")
+        if tier in ("strong", "value"):
+            target_lines = strong_lines if tier == "strong" else vb_lines
+            counter_total = "strong_total" if tier == "strong" else "vb_total"
+            counter_correct = "strong_correct" if tier == "strong" else "vb_correct"
+
+            if tier == "strong":
+                strong_total += 1
             else:
-                vb_lines.append(f"❌  **{heim}** {score_str} **{ausw}**")
-                vb_lines.append(f"      Pick: {short(tipp)}  ·  −10.00 EUR")
-            vb_lines.append("")
+                vb_total += 1
+
+            tier_label = "🔥" if tier == "strong" else "✅"
+
+            if richtig:
+                if tier == "strong":
+                    strong_correct += 1
+                else:
+                    vb_correct += 1
+                profit = (row["Quote"] - 1) * 10
+                target_lines.append(f"✅  **{heim}** {score_str} **{ausw}**")
+                target_lines.append(f"      {tier_label} Pick: {short(tipp)}  ·  +{profit:.2f} EUR")
+            else:
+                target_lines.append(f"❌  **{heim}** {score_str} **{ausw}**")
+                target_lines.append(f"      {tier_label} Pick: {short(tipp)}  ·  −10.00 EUR")
+            target_lines.append("")
         else:
             if richtig:
                 rest_lines.append(f"✅  **{heim}** {score_str} **{ausw}**")
@@ -147,7 +177,17 @@ def sende_ergebnisse(predictions_df: pd.DataFrame, ergebnisse: list[dict],
 
     embeds = []
 
-    # Grünes Embed: Value Bet Ergebnisse
+    # 🔥 Strong Value Ergebnisse
+    if len(strong_lines) > 0:
+        embeds.append({
+            "color": 0xFF9500,
+            "author": {"name": "🐍 KOBRA Ergebnisse"},
+            "title": f"🔥  Strong Value  ·  {datum_display}",
+            "description": "\n".join(strong_lines).strip(),
+            "footer": {"text": f"Strong Value: {strong_correct}/{strong_total} richtig"},
+        })
+
+    # ✅ Value Bet Ergebnisse
     if len(vb_lines) > 0:
         embeds.append({
             "color": 0x57F287,
@@ -159,6 +199,8 @@ def sende_ergebnisse(predictions_df: pd.DataFrame, ergebnisse: list[dict],
 
     # Graues Embed: Restliche Spiele
     if len(rest_lines) > 0:
+        picks_total = strong_total + vb_total
+        picks_correct = strong_correct + vb_correct
         embeds.append({
             "color": 0x95A5A6,
             "title": f"📊  Weitere Spiele  ·  {datum_display}",
