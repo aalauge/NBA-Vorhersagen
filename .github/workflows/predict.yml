@@ -1,21 +1,32 @@
 name: KOBRA – Daily NBA Predictions
 
 on:
-  # Täglich um 18:00 UTC (Spiele starten meist abends US-Zeit)
   schedule:
-    - cron: "0 8 * * *"
-    - cron: "0 18 * * *"
-  # Manuell auslösbar
+    - cron: "0 8 * * *"   # 08:00 UTC = 10:00 CEST (Morgens)
+    - cron: "0 18 * * *"  # 18:00 UTC = 20:00 CEST (Abends)
   workflow_dispatch:
     inputs:
       date:
         description: "Datum (YYYY-MM-DD), leer = heute"
         required: false
         default: ""
+      mode:
+        description: "Modus: morgens, abends, oder beide"
+        required: false
+        default: "beide"
+        type: choice
+        options:
+          - morgens
+          - abends
+          - beide
 
 jobs:
-  predict:
+  # ─── Morgens: Frühprognose + Ergebnisse von gestern ──────────────────────
+  morgens:
     runs-on: ubuntu-latest
+    if: >-
+      github.event_name == 'workflow_dispatch' && (github.event.inputs.mode == 'morgens' || github.event.inputs.mode == 'beide')
+      || (github.event_name == 'schedule' && github.event.schedule == '0 8 * * *')
 
     steps:
       - name: Checkout
@@ -30,13 +41,6 @@ jobs:
       - name: Abhängigkeiten installieren
         run: pip install -r requirements.txt
 
-      - name: Quoten holen
-        env:
-          ODDS_API_KEY: ${{ secrets.ODDS_API_KEY }}
-        run: |
-          mkdir -p odds
-          python fetch_odds.py || echo "⚠️ Odds fetch fehlgeschlagen – weiter ohne Quoten"
-
       - name: Vorhersagen erstellen
         env:
           BALLDONTLIE_API_KEY: ${{ secrets.BALLDONTLIE_API_KEY }}
@@ -47,22 +51,48 @@ jobs:
           fi
           python kobra.py $DATE_ARG --output predictions.csv
 
-      - name: Telegram Benachrichtigung
+      - name: Frühprognose an Discord (Free)
+        env:
+          DISCORD_WEBHOOK_FREE: ${{ secrets.DISCORD_WEBHOOK_FREE }}
+        run: |
+          DATUM=$(date +%d.%m.%Y)
+          python notify_discord.py --morgens --predictions predictions.csv --datum "$DATUM"
+
+      - name: Ergebnisse von gestern an Discord
+        env:
+          BALLDONTLIE_API_KEY: ${{ secrets.BALLDONTLIE_API_KEY }}
+          DISCORD_WEBHOOK_ERGEBNISSE: ${{ secrets.DISCORD_WEBHOOK_ERGEBNISSE }}
+        run: |
+          GESTERN=$(date -d "yesterday" +%Y-%m-%d 2>/dev/null || date -v-1d +%Y-%m-%d)
+          PRED_FILE="results/predictions_${GESTERN}.csv"
+          ODDS_FILE="odds/odds_${GESTERN}.csv"
+
+          if [ ! -f "$PRED_FILE" ]; then
+            echo "⚠️ Keine Predictions von gestern ($PRED_FILE)"
+            exit 0
+          fi
+
+          ODDS_ARG=""
+          if [ -f "$ODDS_FILE" ]; then
+            ODDS_ARG="--odds $ODDS_FILE"
+          fi
+
+          python notify_ergebnisse.py --datum "$GESTERN" --predictions "$PRED_FILE" $ODDS_ARG
+
+      - name: Telegram-Benachrichtigung
+        if: always()
         env:
           TELEGRAM_BOT_TOKEN: ${{ secrets.TELEGRAM_BOT_TOKEN }}
           TELEGRAM_CHAT_IDS: ${{ secrets.TELEGRAM_CHAT_IDS }}
         run: |
-          python notify_telegram.py || echo "⚠️ Telegram fehlgeschlagen – weiter"
-
-      - name: Discord Vorhersage
-        env:
-          DISCORD_WEBHOOK_FREE: ${{ secrets.DISCORD_WEBHOOK_FREE }}
-        run: python notify_discord.py --morgens --predictions predictions.csv
+          if [ -n "$TELEGRAM_BOT_TOKEN" ] && [ -n "$TELEGRAM_CHAT_IDS" ]; then
+            python notify_telegram.py || echo "Telegram fehlgeschlagen (nicht kritisch)"
+          fi
 
       - name: Ergebnisse als Artifact hochladen
         uses: actions/upload-artifact@v4
         with:
-          name: predictions-${{ github.event.inputs.date || 'today' }}
+          name: predictions-morgens-${{ github.event.inputs.date || 'today' }}
           path: predictions.csv
           retention-days: 90
 
@@ -73,6 +103,67 @@ jobs:
           cp predictions.csv "results/predictions_${DATE}.csv"
           git config user.name "github-actions[bot]"
           git config user.email "github-actions[bot]@users.noreply.github.com"
-          git add results/ odds/
-          git diff --staged --quiet || git commit -m "🏀 Predictions for ${DATE}"
+          git add results/
+          git diff --staged --quiet || git commit -m "🏀 Predictions for ${DATE} (morgens)"
+          git push
+
+  # ─── Abends: Finale Vorhersage + Value Bets ─────────────────────────────
+  abends:
+    runs-on: ubuntu-latest
+    if: >-
+      github.event_name == 'workflow_dispatch' && (github.event.inputs.mode == 'abends' || github.event.inputs.mode == 'beide')
+      || (github.event_name == 'schedule' && github.event.schedule == '0 18 * * *')
+
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Pull neueste Änderungen
+        run: git pull --rebase
+
+      - name: Python einrichten
+        uses: actions/setup-python@v5
+        with:
+          python-version: "3.12"
+          cache: "pip"
+
+      - name: Abhängigkeiten installieren
+        run: pip install -r requirements.txt
+
+      - name: Vorhersagen neu erstellen (aktuelle Verletzungen)
+        env:
+          BALLDONTLIE_API_KEY: ${{ secrets.BALLDONTLIE_API_KEY }}
+        run: |
+          DATE_ARG=""
+          if [ -n "${{ github.event.inputs.date }}" ]; then
+            DATE_ARG="--date ${{ github.event.inputs.date }}"
+          fi
+          python kobra.py $DATE_ARG --output predictions.csv
+
+      - name: Discord – Final + Value Bets
+        env:
+          DISCORD_WEBHOOK_FREE: ${{ secrets.DISCORD_WEBHOOK_FREE }}
+          DISCORD_WEBHOOK_PREMIUM: ${{ secrets.DISCORD_WEBHOOK_PREMIUM }}
+        run: |
+          DATE=$(date +%Y-%m-%d)
+          DATUM=$(date +%d.%m.%Y)
+          ODDS_FILE="odds/odds_${DATE}.csv"
+
+          if [ -f "$ODDS_FILE" ]; then
+            echo "📊 Odds gefunden – sende Final + Value Bets"
+            python notify_discord.py --abends --predictions predictions.csv --odds "$ODDS_FILE" --datum "$DATUM"
+          else
+            echo "⚠️ Keine Odds-Datei – sende nur Final (ohne Value Bets)"
+            python notify_discord.py --morgens --predictions predictions.csv --datum "$DATUM"
+          fi
+
+      - name: Aktualisierte Predictions committen
+        run: |
+          DATE=$(date +%Y-%m-%d)
+          mkdir -p results
+          cp predictions.csv "results/predictions_${DATE}.csv"
+          git config user.name "github-actions[bot]"
+          git config user.email "github-actions[bot]@users.noreply.github.com"
+          git add results/
+          git diff --staged --quiet || git commit -m "🏀 Predictions for ${DATE} (abends – final)"
           git push
