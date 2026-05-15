@@ -525,8 +525,14 @@ def _lade_nba_pdf(datum: str) -> pd.DataFrame:
                             current_team = full
                             break
 
+                    # Team-Name aus Zeile entfernen (pdfplumber merged sie in Spielernamen)
+                    line_clean = line
+                    if current_team:
+                        line_clean = line_clean.replace(current_team.replace(' ', ''), ' ').replace(current_team, ' ')
+                        line_clean = re.sub(r'\s+', ' ', line_clean).strip()
+
                     # Spieler + Status erkennen
-                    m = player_re.search(line)
+                    m = player_re.search(line_clean)
                     if m and current_team:
                         last_name = m.group(1)
                         first_name = m.group(2)
