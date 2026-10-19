@@ -126,6 +126,12 @@ def sende_abend(df: pd.DataFrame, odds_df: pd.DataFrame, datum: str,
     merged["EV"] = (merged["Konfidenz"] / 100 * merged["Quote"] - 1) * 100
     merged["EV"] = merged["EV"].round(1)
     merged["Tier"] = merged.apply(lambda r: klassifiziere_tier(r["EV"], r["Quote"]), axis=1)
+
+    # Manuelle Skips: optionale Spalte "Notiz" in der Odds-CSV → Spiel wird als Skip mit Notiz gezeigt
+    if "Notiz" not in merged.columns:
+        merged["Notiz"] = ""
+    merged["Notiz"] = merged["Notiz"].fillna("").astype(str).str.strip()
+    merged.loc[merged["Notiz"] != "", "Tier"] = "skip"
     merged["Mindestquote"] = (1 / (merged["Konfidenz"] / 100)).round(2)
     merged["Mindestquote"] = (1 / (merged["Konfidenz"] / 100)).round(2)
 
@@ -215,7 +221,10 @@ def sende_abend(df: pd.DataFrame, odds_df: pd.DataFrame, datum: str,
 
             mq = 1 / (row["Konfidenz"] / 100) if row["Konfidenz"] > 0 else 99
             skip_lines.append(f"~~{tipp} vs {gegner}~~")
-            skip_lines.append(f"Mindestquote {mq:.2f}  ·  {skip_grund(row['EV'], row['Quote'])}")
+            if row["Notiz"]:
+                skip_lines.append(f"Winamax {row['Quote']:.2f}  ·  📝 {row['Notiz']}")
+            else:
+                skip_lines.append(f"Mindestquote {mq:.2f}  ·  {skip_grund(row['EV'], row['Quote'])}")
             skip_lines.append("")
 
         premium_embeds.append({
@@ -240,7 +249,7 @@ def sende_abend(df: pd.DataFrame, odds_df: pd.DataFrame, datum: str,
 
 def lade_odds(pfad: str) -> pd.DataFrame:
     """
-    Erwartet CSV mit: Heimteam, Quote
+    Erwartet CSV mit: Heimteam, Quote (optional: Notiz → Spiel wird als Skip mit Notiz gezeigt)
     Beispiel:
         Heimteam,Quote
         Oklahoma City Thunder,1.35

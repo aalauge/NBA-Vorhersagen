@@ -107,6 +107,9 @@ def sende_ergebnisse(predictions_df: pd.DataFrame, ergebnisse: list[dict],
         merged = predictions_df.merge(odds_df, on="Heimteam", how="left")
         merged["EV"] = (merged["Konfidenz"] / 100 * merged["Quote"] - 1) * 100
         merged["Tier"] = merged.apply(lambda r: klassifiziere_tier(r["EV"], r["Quote"]), axis=1)
+        # Manuelle Skips (Spalte "Notiz" in der Odds-CSV) zählen nicht als Pick – wie in notify_discord.py
+        if "Notiz" in merged.columns:
+            merged.loc[merged["Notiz"].fillna("").astype(str).str.strip() != "", "Tier"] = "skip"
     else:
         merged = predictions_df.copy()
         merged["Quote"] = None
