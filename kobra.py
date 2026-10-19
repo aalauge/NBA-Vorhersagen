@@ -336,13 +336,17 @@ FEATURES = [
 def trainiere_modell(df, test_season):
     train = df[df["season"] < test_season]
     test = df[df["season"] == test_season]
-    if len(train) == 0 or len(test) == 0:
-        log.warning("Zu wenig Daten zum Trainieren/Testen.")
+    if len(train) == 0:
+        log.warning("Keine Trainingsdaten.")
         return None, 0.0
     model = LogisticRegression(max_iter=1000)
     model.fit(train[FEATURES], train["home_win"])
+    # Saisonstart: laufende Saison hat noch keine fertigen Spiele -> Test überspringen statt Abbruch
+    if len(test) == 0:
+        log.info(f"Saison {test_season}: noch keine fertigen Spiele – Test übersprungen, Modell trainiert auf {len(train)} Spielen.")
+        return model, None
     acc = accuracy_score(test["home_win"], model.predict(test[FEATURES]))
-    log.info(f"Modell-Genauigkeit (Saison {test_season}): {acc:.1%}")
+    log.info(f"Modell-Genauigkeit (Saison {test_season}, {len(test)} Spiele): {acc:.1%}")
     return model, acc
 
 
@@ -805,14 +809,21 @@ def main():
     parser = argparse.ArgumentParser(description="KOBRA – NBA Game Predictions")
     parser.add_argument("--date", default=datetime.now().strftime("%Y-%m-%d"),
                         help="Datum für Vorhersagen (YYYY-MM-DD)")
-    parser.add_argument("--seasons", nargs="+", type=int, default=[2023, 2024, 2025],
-                        help="Trainings-Saisons")
+    parser.add_argument("--seasons", nargs="+", type=int, default=None,
+                        help="Saisons (default: 2 Vorsaisons + laufende Saison, automatisch)")
     parser.add_argument("--output", default=None,
                         help="Ausgabe-CSV (default: predictions_DATUM.csv)")
     args = parser.parse_args()
 
     datum = args.date
     output = args.output or f"predictions_{datum}.csv"
+
+    # Saisons automatisch: NBA-Saison beginnt im Oktober (balldontlie: 2026 = Saison 2026/27)
+    if args.seasons is None:
+        d = datetime.strptime(datum, "%Y-%m-%d")
+        aktuelle_saison = d.year if d.month >= 10 else d.year - 1
+        args.seasons = [aktuelle_saison - 2, aktuelle_saison - 1, aktuelle_saison]
+    log.info(f"Saisons: {args.seasons} (Training: {args.seasons[:-1]}, laufend: {args.seasons[-1]})")
 
     # 1) Spieldaten laden
     df = lade_alle_spiele(args.seasons)

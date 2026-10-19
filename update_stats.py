@@ -32,8 +32,14 @@ def lade_spieler_stats(saison: str, min_games: int = 20) -> pd.DataFrame:
 def main():
     print(f"=== Spieler-Stats Update: {datetime.now().strftime('%Y-%m-%d %H:%M')} ===\n")
 
-    aktuell = lade_spieler_stats("2025-26")
-    vorjahr = lade_spieler_stats("2024-25")
+    # Saison automatisch bestimmen (NBA-Saison beginnt im Oktober)
+    jetzt = datetime.now()
+    start = jetzt.year if jetzt.month >= 10 else jetzt.year - 1
+    saison_aktuell = f"{start}-{str(start + 1)[-2:]}"
+    saison_vorjahr = f"{start - 1}-{str(start)[-2:]}"
+
+    aktuell = lade_spieler_stats(saison_aktuell)
+    vorjahr = lade_spieler_stats(saison_vorjahr)
 
     if len(aktuell) == 0 and len(vorjahr) == 0:
         print("\nKeine Stats geladen. Abbruch.")
