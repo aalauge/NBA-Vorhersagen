@@ -174,9 +174,14 @@ def lade_alle_spiele(saisons: list[int]) -> pd.DataFrame:
         "away_score": g["visitor_team_score"],
         "season": g["season"],
         "status": g["status"],
+        "postseason": bool(g.get("postseason", False)),
     } for g in alle])
 
-    df = df[df["status"] == "Final"].copy()
+    # Nur Regular Season: Playoff-Spiele verzerren die Form am Saisonstart (Backtest Nov 2026:
+    # Woche-1-Brier 0,252 mit vs. 0,212 ohne Playoffs; Knicks Opening Night 88% → 62%)
+    n_playoffs = int(df["postseason"].sum())
+    df = df[(df["status"] == "Final") & (~df["postseason"])].copy()
+    log.info(f"Playoff-Spiele ausgeschlossen: {n_playoffs}")
     df["date"] = pd.to_datetime(df["date"])
     df["home_win"] = (df["home_score"] > df["away_score"]).astype(int)
     df = df.sort_values("date").reset_index(drop=True)
