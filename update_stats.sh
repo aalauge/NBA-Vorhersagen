@@ -15,15 +15,19 @@ cd "$REPO_DIR" || { echo "$(date): Ordner nicht gefunden!" >> "$LOG_FILE"; exit 
 
 # Python-Skript ausführen
 /opt/anaconda3/bin/python3 update_stats.py >> "$LOG_FILE" 2>&1
+/opt/anaconda3/bin/python3 update_kader.py >> "$LOG_FILE" 2>&1
 
 # Nur pushen wenn sich was geändert hat
-if git diff --quiet player_stats.csv 2>/dev/null; then
+git add player_stats.csv kader_spieler.csv kader_historie.csv 2>/dev/null
+if git diff --cached --quiet; then
     echo "$(date): Keine Änderungen, nichts zu pushen." >> "$LOG_FILE"
 else
-    git add player_stats.csv
-    git commit -m "📊 Player Stats Update $(date +%Y-%m-%d)"
-    git pull --rebase && git push
-    echo "$(date): Stats gepusht!" >> "$LOG_FILE"
+    git commit -m "📊 Stats + Kader Update $(date +%Y-%m-%d)"
+    if git pull --rebase && git push; then
+        echo "$(date): Stats gepusht!" >> "$LOG_FILE"
+    else
+        echo "$(date): ❌ PUSH FEHLGESCHLAGEN (Login/Token prüfen!)" >> "$LOG_FILE"
+    fi
 fi
 
 echo "$(date): Fertig." >> "$LOG_FILE"

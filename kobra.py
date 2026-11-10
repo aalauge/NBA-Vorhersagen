@@ -42,6 +42,13 @@ try:
 except ImportError:
     HAS_ODDS = False
 
+# Kader-Feature (kader_features.py + kader_historie.csv + kader_spieler.csv, täglich vom Mac gepusht)
+try:
+    import kader_features as kf
+    HAS_KADER = True
+except ImportError:
+    HAS_KADER = False
+
 # ─── Konfiguration ────────────────────────────────────────────────────────────
 
 API_KEY = os.environ.get("BALLDONTLIE_API_KEY", "")
@@ -52,6 +59,13 @@ ELO_START = 1500
 ELO_K = 20
 ELO_SEASON_REGRESSION = 0.25
 FORM_WINDOW = 10
+
+_BASIS = os.path.dirname(os.path.abspath(__file__))
+KADER_HISTORIE = os.path.join(_BASIS, "kader_historie.csv")
+KADER_SPIELER = os.path.join(_BASIS, "kader_spieler.csv")
+# Die Kaderstärke zieht Out/Doubtful-Spieler schon ab. Die alte Korrektur (±1 % pro Impact-Punkt)
+# würde Ausfälle doppelt zählen → im Kader-Modus aus. Funktion bleibt erhalten (Fallback-Modus).
+VERLETZUNGSKORREKTUR_MIT_KADER = False
 
 logging.basicConfig(
     level=logging.INFO,
@@ -337,22 +351,69 @@ FEATURES = [
     "home_variance", "away_variance",
 ]
 
+# 12 Original-Features + Kaderstärke-Differenz (Backtest 2024/25+2025/26: Brier −0,0059 ± 0,0027)
+FEATURES_KADER = FEATURES + ["kader_diff"]
 
-def trainiere_modell(df, test_season):
+
+def trainiere_modell(df, test_season, features=FEATURES):
     train = df[df["season"] < test_season]
     test = df[df["season"] == test_season]
     if len(train) == 0:
         log.warning("Keine Trainingsdaten.")
         return None, 0.0
     model = LogisticRegression(max_iter=1000)
-    model.fit(train[FEATURES], train["home_win"])
+    model.fit(train[features], train["home_win"])
     # Saisonstart: laufende Saison hat noch keine fertigen Spiele -> Test überspringen statt Abbruch
     if len(test) == 0:
         log.info(f"Saison {test_season}: noch keine fertigen Spiele – Test übersprungen, Modell trainiert auf {len(train)} Spielen.")
         return model, None
-    acc = accuracy_score(test["home_win"], model.predict(test[FEATURES]))
+    acc = accuracy_score(test["home_win"], model.predict(test[features]))
     log.info(f"Modell-Genauigkeit (Saison {test_season}, {len(test)} Spiele): {acc:.1%}")
     return model, acc
+
+
+# ─── SCHRITT 4b: Kader-Stärke ────────────────────────────────────────────────
+
+def lade_kader():
+    """Liest kader_historie.csv + kader_spieler.csv. Gibt (historie, spieler) oder (None, None)."""
+    if not HAS_KADER:
+        log.warning("[Kader] kader_features.py fehlt – 12-Feature-Modell.")
+        return None, None
+    if not (os.path.exists(KADER_HISTORIE) and os.path.exists(KADER_SPIELER)):
+        log.warning("[Kader] kader_historie.csv / kader_spieler.csv fehlen – 12-Feature-Modell.")
+        return None, None
+    historie = pd.read_csv(KADER_HISTORIE)
+    spieler = pd.read_csv(KADER_SPIELER)
+    log.info(f"[Kader] Historie: {len(historie)} Team-Spiele | Spieler: {len(spieler)}")
+    return historie, spieler
+
+
+def _ist_verletzt(name, liste):
+    """True, wenn der Spieler (Vor- + Nachname, akzentfrei) in der Ausfallliste steht."""
+    t = _normalize_ascii(str(name)).lower().split()
+    if len(t) < 2:
+        return False
+    for v in liste:
+        v = _normalize_ascii(str(v)).lower()
+        if t[0] in v and t[-1] in v:
+            return True
+    return False
+
+
+def heutige_kaderstaerke(teams, spieler, verletzungen_df):
+    """Kaderstärke je Team für heute: aktueller Kader minus Out/Doubtful laut Injury Report."""
+    staerke = {}
+    for team in teams:
+        kader = spieler[spieler["TEAM_NAME"] == team]
+        raus = []
+        if verletzungen_df is not None and len(verletzungen_df) > 0:
+            v = verletzungen_df[(verletzungen_df["Team"] == team)
+                                & verletzungen_df["Status"].str.contains("Out|Doubtful", case=False, na=False)]
+            raus = v["Spieler"].tolist()
+        aktiv = kader[~kader["PLAYER_NAME"].apply(lambda n: _ist_verletzt(n, raus))]
+        staerke[team] = kf.team_wert(aktiv["rate"], aktiv["exp_min"]) if len(aktiv) > 0 else float("nan")
+        log.info(f"  [Kader] {team}: {staerke[team]:.1f} ({len(aktiv)} aktiv, {len(kader) - len(aktiv)} fehlen)")
+    return staerke
 
 
 # ─── SCHRITT 5: Heutige Spiele laden & vorhersagen ───────────────────────────
@@ -368,7 +429,7 @@ def lade_heutige_spiele(datum: str) -> list[dict]:
     return spiele
 
 
-def erstelle_vorhersagen(spiele, model, df, elo):
+def erstelle_vorhersagen(spiele, model, df, elo, features=FEATURES, kader_heute=None):
     vorhersagen = []
     now = pd.Timestamp.now()
 
@@ -403,6 +464,13 @@ def erstelle_vorhersagen(spiele, model, df, elo):
             "home_variance": _scoring_variance(h_spiele, heim),
             "away_variance": _scoring_variance(a_spiele, ausw),
         }])
+        kader_diff = None
+        if "kader_diff" in features:
+            kh = (kader_heute or {}).get(heim, float("nan"))
+            ka = (kader_heute or {}).get(ausw, float("nan"))
+            kader_diff = 0.0 if pd.isna(kh) or pd.isna(ka) else kh - ka
+            x["kader_diff"] = kader_diff
+        x = x[features]
 
         prob = model.predict_proba(x)[0][1]
         gewinner = heim if prob > 0.5 else ausw
@@ -414,6 +482,7 @@ def erstelle_vorhersagen(spiele, model, df, elo):
             "Heimsieg %": round(prob * 100, 1),
             "Tipp": gewinner,
             "Konfidenz": round(konfidenz * 100, 1),
+            "Kader_Diff": round(kader_diff, 1) if kader_diff is not None else "",
         })
 
     return pd.DataFrame(vorhersagen)
@@ -757,6 +826,7 @@ def korrigiere_vorhersagen(vorhersagen_df, verletzungen_df, impact_df):
             "Konfidenz": round(konfidenz * 100, 1),
             "Heim_Verletzungen": ", ".join(h_details) if h_details else "-",
             "Ausw_Verletzungen": ", ".join(a_details) if a_details else "-",
+            "Kader_Diff": spiel.get("Kader_Diff", ""),
         })
 
     return pd.DataFrame(ergebnisse)
@@ -842,9 +912,22 @@ def main():
     # 3) Elo berechnen
     df, elo = berechne_elo(df)
 
+    # 3b) Kader-Stärke
+    kader_hist, kader_spieler = lade_kader()
+    features = FEATURES
+    if kader_hist is not None:
+        df = kf.merge_kader(df, kader_hist)
+        abdeckung = df["home_kader"].notna().mean()
+        log.info(f"[Kader] Abdeckung Trainingsspiele: {abdeckung:.1%}")
+        if abdeckung >= 0.9:
+            features = FEATURES_KADER
+        else:
+            log.warning("[Kader] Abdeckung < 90 % – 12-Feature-Modell.")
+    log.info(f"Modell: {len(features)} Features ({'mit' if 'kader_diff' in features else 'ohne'} Kader)")
+
     # 4) Modell trainieren
     test_season = max(args.seasons)
-    model, acc = trainiere_modell(df, test_season)
+    model, acc = trainiere_modell(df, test_season, features)
     if model is None:
         log.error("Modell konnte nicht trainiert werden. Abbruch.")
         sys.exit(1)
@@ -855,8 +938,16 @@ def main():
         log.warning(f"Keine Spiele für {datum} gefunden.")
         sys.exit(0)
 
-    # 6) Basis-Vorhersagen
-    vorhersagen_df = erstelle_vorhersagen(heute_spiele, model, df, elo)
+    # 6) Verletzungen (vor den Vorhersagen, weil die Kaderstärke Ausfälle abzieht)
+    impact_df = lade_impact_scores()
+    verletzungen_df = lade_verletzungen(impact_df, datum=datum)
+    kader_heute = None
+    if "kader_diff" in features:
+        teams = {s["home_team"]["full_name"] for s in heute_spiele} | {s["visitor_team"]["full_name"] for s in heute_spiele}
+        kader_heute = heutige_kaderstaerke(sorted(teams), kader_spieler, verletzungen_df)
+
+    # 6b) Basis-Vorhersagen
+    vorhersagen_df = erstelle_vorhersagen(heute_spiele, model, df, elo, features, kader_heute)
     if len(vorhersagen_df) == 0:
         log.warning("Keine Vorhersagen möglich.")
         sys.exit(0)
@@ -864,19 +955,26 @@ def main():
     log.info("\n📊 BASIS-VORHERSAGEN:")
     print(vorhersagen_df.to_string(index=False))
 
-    # 7) Verletzungen + Impact
-    impact_df = lade_impact_scores()
-    verletzungen_df = lade_verletzungen(impact_df, datum=datum)
+    # 7) Verletzungskorrektur (im Kader-Modus aus, s. VERLETZUNGSKORREKTUR_MIT_KADER)
+    korrektur_an = ("kader_diff" not in features) or VERLETZUNGSKORREKTUR_MIT_KADER
 
     # 8) Finale Vorhersagen
-    if len(verletzungen_df) > 0 and len(impact_df) > 0:
+    if korrektur_an and len(verletzungen_df) > 0 and len(impact_df) > 0:
         log.info("Korrigiere Vorhersagen mit Verletzungsdaten…")
         finale_df = korrigiere_vorhersagen(vorhersagen_df, verletzungen_df, impact_df)
     else:
-        log.warning("Verletzungskorrektur übersprungen (keine Daten).")
         finale_df = vorhersagen_df.copy()
-        finale_df["Heim_Verletzungen"] = "-"
-        finale_df["Ausw_Verletzungen"] = "-"
+        if not korrektur_an and len(verletzungen_df) > 0:
+            log.info("Ausfälle stecken in der Kaderstärke – keine zusätzliche Korrektur.")
+            def _liste(team):
+                v = verletzungen_df[verletzungen_df["Team"] == team]
+                return ", ".join(f"{'⚠️ ' if 'Day' in s else ''}{n} ({s})" for n, s in zip(v["Spieler"], v["Status"])) or "-"
+            finale_df["Heim_Verletzungen"] = finale_df["Heimteam"].apply(_liste)
+            finale_df["Ausw_Verletzungen"] = finale_df["Auswärtsteam"].apply(_liste)
+        else:
+            log.warning("Verletzungskorrektur übersprungen (keine Daten).")
+            finale_df["Heim_Verletzungen"] = "-"
+            finale_df["Ausw_Verletzungen"] = "-"
 
     print("\n🏀 FINALE VORHERSAGEN")
     print("=" * 80)
