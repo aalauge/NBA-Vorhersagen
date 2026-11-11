@@ -1,338 +1,337 @@
 PLAYER_ID,PLAYER_NAME,TEAM_NAME,rate,exp_min,repl
-1630173,Precious Achiuwa,Sacramento Kings,0.3518,24.7419,0.23
-1643411,Darius Acuff Jr.,Sacramento Kings,0.3408,37.0,0.23
+1630173,Precious Achiuwa,Sacramento Kings,0.3545,24.5158,0.23
+1643411,Darius Acuff Jr.,Sacramento Kings,0.3504,37.2727,0.23
 203500,Steven Adams,Houston Rockets,0.299,21.9412,0.23
-1628389,Bam Adebayo,Miami Heat,0.4725,32.4624,0.23
+1628389,Bam Adebayo,Miami Heat,0.4699,32.5579,0.23
 1642369,Michael Ajayi,Charlotte Hornets,0.23,12.0,0.23
-1643022,Jaden Akins,New York Knicks,0.2285,1.0,0.23
+1643022,Jaden Akins,New York Knicks,0.2284,1.0,0.23
 1630583,Santi Aldama,Dallas Mavericks,0.3709,26.3469,0.23
-1641725,Trey Alexander,Utah Jazz,0.2463,12.3333,0.23
-1629638,Nickeil Alexander-Walker,Atlanta Hawks,0.4272,32.7941,0.23
-1628960,Grayson Allen,Charlotte Hornets,0.3783,28.1781,0.23
+1641725,Trey Alexander,Utah Jazz,0.2462,12.3333,0.23
+1629638,Nickeil Alexander-Walker,Atlanta Hawks,0.4271,32.7941,0.23
+1628960,Grayson Allen,Charlotte Hornets,0.3782,28.1781,0.23
 1628386,Jarrett Allen,Cleveland Cavaliers,0.4753,26.527,0.23
-1630631,Jose Alvarado,New York Knicks,0.282,18.974,0.23
-1643417,Nate Ament,Milwaukee Bucks,0.2443,16.375,0.23
-1643515,Christian Anderson,Charlotte Hornets,0.1892,12.4,0.23
+1630631,Jose Alvarado,New York Knicks,0.2793,18.6456,0.23
+1643417,Nate Ament,Milwaukee Bucks,0.2503,17.0,0.23
+1643515,Christian Anderson,Charlotte Hornets,0.1891,12.4,0.23
 203937,Kyle Anderson,Toronto Raptors,0.2984,16.8596,0.23
-203507,Giannis Antetokounmpo,Miami Heat,0.6358,30.3036,0.23
-1628384,OG Anunoby,New York Knicks,0.3594,33.2,0.23
-1630166,Deni Avdija,Portland Trail Blazers,0.4973,33.0833,0.23
+203507,Giannis Antetokounmpo,Miami Heat,0.6387,30.3276,0.23
+1628384,OG Anunoby,New York Knicks,0.3619,33.1034,0.23
+1630166,Deni Avdija,Portland Trail Blazers,0.4998,33.1047,0.23
 1643591,Tobe Awaka,Chicago Bulls,0.2509,10.0,0.23
 1629028,Deandre Ayton,Washington Wizards,0.3873,24.3723,0.23
 1628963,Marvin Bagley III,Denver Nuggets,0.4124,18.2564,0.23
-1642846,Ace Bailey,Utah Jazz,0.302,28.2174,0.23
+1642846,Ace Bailey,Utah Jazz,0.3056,28.3617,0.23
 1630163,LaMelo Ball,Minnesota Timberwolves,0.4614,27.9362,0.23
-1628964,Mo Bamba,Utah Jazz,0.3092,16.0,0.23
-1631094,Paolo Banchero,Orlando Magic,0.4492,34.6447,0.23
-1630217,Desmond Bane,Orlando Magic,0.3952,33.7653,0.23
-1631230,Dominick Barlow,Philadelphia 76ers,0.2955,23.7324,0.23
-203084,Harrison Barnes,San Antonio Spurs,0.291,23.5684,0.23
+1628964,Mo Bamba,Utah Jazz,0.3201,16.1111,0.23
+1631094,Paolo Banchero,Orlando Magic,0.4491,34.6447,0.23
+1630217,Desmond Bane,Orlando Magic,0.3907,33.81,0.23
+1631230,Dominick Barlow,Philadelphia 76ers,0.2954,23.7324,0.23
+203084,Harrison Barnes,San Antonio Spurs,0.2909,23.5684,0.23
 1630567,Scottie Barnes,Toronto Raptors,0.4596,33.4896,0.23
-1642964,Brooks Barnhizer,Oklahoma City Thunder,0.2234,7.9074,0.23
+1642964,Brooks Barnhizer,Oklahoma City Thunder,0.2245,7.8036,0.23
 1629628,RJ Barrett,Toronto Raptors,0.4086,31.039,0.23
-1629646,Charles Bassey,Golden State Warriors,0.3669,12.1613,0.23
+1629646,Charles Bassey,Golden State Warriors,0.3668,12.1613,0.23
 1642419,Jamison Battle,Toronto Raptors,0.2706,10.9012,0.23
-203078,Bradley Beal,LA Clippers,0.2185,20.1667,0.23
-1641736,Reece Beekman,Washington Wizards,0.2293,1.0,0.23
+203078,Bradley Beal,LA Clippers,0.2184,20.1667,0.23
+1641736,Reece Beekman,Washington Wizards,0.2292,1.0,0.23
 1642866,Joan Beringer,Minnesota Timberwolves,0.3485,10.9194,0.23
 1630180,Saddiq Bey,New Orleans Pelicans,0.4128,30.1277,0.23
 1641844,Tarik Biberović,Dallas Mavericks,0.23,12.0,0.23
 1643548,Tyler Bilodeau,Brooklyn Nets,0.23,12.0,0.23
-1629048,Goga Bitadze,Orlando Magic,0.3837,14.0,0.23
+1629048,Goga Bitadze,Orlando Magic,0.3813,14.025,0.23
 1642927,Nate Bittle,Toronto Raptors,0.23,12.0,0.23
-1641710,Anthony Black,Orlando Magic,0.3526,29.9342,0.23
-1641778,Leaky Black,Sacramento Kings,0.2423,24.5185,0.23
+1641710,Anthony Black,Orlando Magic,0.3608,30.0128,0.23
+1641778,Leaky Black,Sacramento Kings,0.2359,24.069,0.23
 203992,Bogdan Bogdanović,Houston Rockets,0.2582,15.5556,0.23
 1641737,Adem Bona,Philadelphia 76ers,0.259,16.7528,0.23
-1626164,Devin Booker,Phoenix Suns,0.4916,33.7317,0.23
+1626164,Devin Booker,Phoenix Suns,0.4888,33.619,0.23
 1643409,Cameron Boozer,Memphis Grizzlies,0.3098,32.1,0.23
 1643573,Kylan Boswell,Charlotte Hornets,0.23,12.0,0.23
-1631123,Jamaree Bouyea,Phoenix Suns,0.2982,12.3571,0.23
-1643558,Jaden Bradley,Toronto Raptors,0.2446,5.125,0.23
-1628396,Tony Bradley,Utah Jazz,0.264,9.898,0.23
+1631123,Jamaree Bouyea,Phoenix Suns,0.3079,12.2069,0.23
+1643558,Jaden Bradley,Toronto Raptors,0.2445,5.125,0.23
+1628396,Tony Bradley,Utah Jazz,0.2672,10.0588,0.23
 1631128,Christian Braun,Denver Nuggets,0.2968,32.4355,0.23
 1642350,Trevon Brazile,Denver Nuggets,0.2675,20.3333,0.23
-1628969,Mikal Bridges,New York Knicks,0.3343,31.62,0.23
-1628970,Miles Bridges,Phoenix Suns,0.3954,31.1158,0.23
-1628415,Dillon Brooks,Phoenix Suns,0.3399,30.4595,0.23
-1627759,Jaylen Brown,Philadelphia 76ers,0.4981,34.7253,0.23
+1628969,Mikal Bridges,New York Knicks,0.3351,31.3333,0.23
+1628970,Miles Bridges,Phoenix Suns,0.3941,30.8454,0.23
+1628415,Dillon Brooks,Phoenix Suns,0.3375,30.2368,0.23
+1627759,Jaylen Brown,Philadelphia 76ers,0.4956,34.5376,0.23
 1641738,Kobe Brown,Indiana Pacers,0.2769,15.3973,0.23
-1643576,Maliq Brown,San Antonio Spurs,0.2316,1.0,0.23
-1643414,Mikel Brown Jr.,Brooklyn Nets,0.2601,23.2857,0.23
-1628973,Jalen Brunson,New York Knicks,0.4913,34.8152,0.23
+1643576,Maliq Brown,San Antonio Spurs,0.2315,1.0,0.23
+1643414,Mikel Brown Jr.,Brooklyn Nets,0.26,23.2857,0.23
+1628973,Jalen Brunson,New York Knicks,0.4917,34.6702,0.23
 1642868,Carter Bryant,San Antonio Spurs,0.233,11.2418,0.23
-1628418,Thomas Bryant,Cleveland Cavaliers,0.3617,12.2778,0.23
+1628418,Thomas Bryant,Cleveland Cavaliers,0.3616,12.2778,0.23
 1641723,Kobe Bufkin,Utah Jazz,0.2245,7.4375,0.23
-1643415,Brayden Burries,Milwaukee Bucks,0.3086,21.0,0.23
+1643415,Brayden Burries,Milwaukee Bucks,0.2963,21.4545,0.23
 202710,Jimmy Butler III,Golden State Warriors,0.4847,31.1842,0.23
 1641824,Matas Buzelis,Chicago Bulls,0.3663,28.5474,0.23
-1631288,Jamal Cain,Orlando Magic,0.2572,14.3621,0.23
-203484,Kentavious Caldwell-Pope,Philadelphia 76ers,0.2734,21.4795,0.23
-1641739,Toumani Camara,Portland Trail Blazers,0.2912,32.19,0.23
+1631288,Jamal Cain,Orlando Magic,0.2555,14.55,0.23
+203484,Kentavious Caldwell-Pope,Philadelphia 76ers,0.2701,21.3333,0.23
+1641739,Toumani Camara,Portland Trail Blazers,0.2922,32.1471,0.23
 203991,Clint Capela,Houston Rockets,0.3382,12.5862,0.23
-1642928,Dylan Cardwell,Sacramento Kings,0.3104,20.06,0.23
-1642382,Branden Carlson,Portland Trail Blazers,0.3147,11.06,0.23
-1643418,Cameron Carr,Los Angeles Lakers,0.2239,2.5,0.23
+1642928,Dylan Cardwell,Sacramento Kings,0.3023,20.4038,0.23
+1642382,Branden Carlson,Portland Trail Blazers,0.3165,10.9423,0.23
+1643418,Cameron Carr,Los Angeles Lakers,0.2238,2.5,0.23
 1642267,Bub Carrington,Washington Wizards,0.2673,25.9231,0.23
-1642269,Devin Carter,Boston Celtics,0.3068,18.4474,0.23
-1628975,Jevon Carter,Orlando Magic,0.2622,16.0317,0.23
-1628976,Wendell Carter Jr.,Orlando Magic,0.3446,30.125,0.23
-1627936,Alex Caruso,Oklahoma City Thunder,0.3159,18.2714,0.23
+1642269,Devin Carter,Boston Celtics,0.3067,18.4474,0.23
+1628975,Jevon Carter,Orlando Magic,0.2583,15.6615,0.23
+1628976,Wendell Carter Jr.,Orlando Magic,0.3438,30.1837,0.23
+1627936,Alex Caruso,Oklahoma City Thunder,0.3097,18.2917,0.23
 1642264,Stephon Castle,San Antonio Spurs,0.4059,29.7111,0.23
 1630658,Colin Castleton,Orlando Magic,0.2482,4.7,0.23
-1643416,Chris Cenac Jr.,Boston Celtics,0.2392,3.0,0.23
+1643416,Chris Cenac Jr.,Boston Celtics,0.2391,3.0,0.23
 1630577,Julian Champagnie,San Antonio Spurs,0.3181,27.2212,0.23
 1630551,Justin Champagnie,Washington Wizards,0.3753,19.8052,0.23
 1642353,Cam Christie,LA Clippers,0.2233,8.2615,0.23
 1631108,Max Christie,Dallas Mavericks,0.2684,27.2062,0.23
-1631321,Sidy Cissoko,Portland Trail Blazers,0.2127,19.5054,0.23
-1630619,Moussa Cissé,Dallas Mavericks,0.3066,11.0385,0.23
+1631321,Sidy Cissoko,Portland Trail Blazers,0.2167,19.7895,0.23
+1630619,Moussa Cissé,Dallas Mavericks,0.3065,11.0385,0.23
 1641740,Jaylen Clark,Minnesota Timberwolves,0.25,13.3068,0.23
-203903,Jordan Clarkson,New York Knicks,0.2976,16.4432,0.23
+203903,Jordan Clarkson,New York Knicks,0.2967,16.3222,0.23
 1629651,Nic Claxton,Chicago Bulls,0.3832,27.5493,0.23
 1642383,Walter Clayton Jr.,Dallas Mavericks,0.2964,19.5843,0.23
-1642363,Nique Clifford,Oklahoma City Thunder,0.236,21.7802,0.23
-1642270,Donovan Clingan,Portland Trail Blazers,0.4521,26.7263,0.23
+1642363,Nique Clifford,Oklahoma City Thunder,0.234,21.7419,0.23
+1642270,Donovan Clingan,Portland Trail Blazers,0.4515,26.7113,0.23
 1641730,Noah Clowney,Brooklyn Nets,0.2684,25.3256,0.23
-1642268,Isaiah Collier,Utah Jazz,0.3553,23.1646,0.23
-1628381,John Collins,Detroit Pistons,0.3491,26.9326,0.23
+1642268,Isaiah Collier,Utah Jazz,0.3584,23.1852,0.23
+1628381,John Collins,Detroit Pistons,0.349,26.9326,0.23
 1628380,Zach Collins,Chicago Bulls,0.2645,13.0909,0.23
 201144,Mike Conley,Boston Celtics,0.2442,17.0484,0.23
-1643553,Ryan Conwell,Miami Heat,0.2399,11.375,0.23
+1643553,Ryan Conwell,Miami Heat,0.2323,12.4444,0.23
 1643595,Quadir Copeland,Houston Rockets,0.23,12.0,0.23
 1641731,Bilal Coulibaly,Washington Wizards,0.3022,26.1184,0.23
 1642907,Cedric Coward,Memphis Grizzlies,0.3684,26.425,0.23
-1642384,Isaiah Crawford,Houston Rockets,0.2362,5.6429,0.23
-1643018,LJ Cryer,Golden State Warriors,0.2603,11.5,0.23
-1630595,Cade Cunningham,Detroit Pistons,0.5143,33.7857,0.23
+1642384,Isaiah Crawford,Houston Rockets,0.2361,5.6429,0.23
+1643018,LJ Cryer,Golden State Warriors,0.2602,11.5,0.23
+1630595,Cade Cunningham,Detroit Pistons,0.5142,33.7857,0.23
 201939,Stephen Curry,Golden State Warriors,0.5787,30.3115,0.23
-1642359,Pacôme Dadiet,New York Knicks,0.2341,4.7879,0.23
-1630700,Dyson Daniels,Atlanta Hawks,0.3833,32.51,0.23
-203076,Anthony Davis,Washington Wizards,0.4695,32.1842,0.23
+1642359,Pacôme Dadiet,New York Knicks,0.2478,4.8571,0.23
+1630700,Dyson Daniels,Atlanta Hawks,0.3832,32.51,0.23
+203076,Anthony Davis,Washington Wizards,0.4694,32.1842,0.23
 201942,DeMar DeRozan,Denver Nuggets,0.4083,30.0538,0.23
 1642484,RayJ Dennis,Atlanta Hawks,0.2297,11.6842,0.23
 1628978,Donte DiVincenzo,Minnesota Timberwolves,0.3087,30.4512,0.23
 1643738,Malik Dia,New Orleans Pelicans,0.23,12.0,0.23
 1631217,Moussa Diabaté,Charlotte Hornets,0.3635,26.5604,0.23
 1643813,Alpha Diallo,Denver Nuggets,0.2063,8.25,0.23
-1642885,Mohamed Diawara,New York Knicks,0.2523,9.3377,0.23
-1641711,Gradey Dick,LA Clippers,0.2794,14.2447,0.23
-1631172,Ousmane Dieng,Milwaukee Bucks,0.2543,17.5915,0.23
+1642885,Mohamed Diawara,New York Knicks,0.2483,9.557,0.23
+1641711,Gradey Dick,LA Clippers,0.2831,14.3438,0.23
+1631172,Ousmane Dieng,Milwaukee Bucks,0.2511,17.7671,0.23
 1631215,Khalifa Diop,Cleveland Cavaliers,0.23,12.0,0.23
-1643717,Josh Dix,Oklahoma City Thunder,0.1839,14.7143,0.23
+1643717,Josh Dix,Oklahoma City Thunder,0.1838,14.7143,0.23
 1643621,Tre Donaldson,Miami Heat,0.23,12.0,0.23
 1629029,Luka Dončić,Los Angeles Lakers,0.6782,35.9167,0.23
 1629652,Luguentz Dort,Atlanta Hawks,0.2244,26.3011,0.23
 1630245,Ayo Dosunmu,Minnesota Timberwolves,0.4058,28.2747,0.23
-203083,Andre Drummond,New York Knicks,0.3476,18.1605,0.23
-1627739,Kris Dunn,LA Clippers,0.281,27.65,0.23
-1642346,Ryan Dunn,Phoenix Suns,0.2771,18.8409,0.23
+203083,Andre Drummond,New York Knicks,0.3504,18.1084,0.23
+1627739,Kris Dunn,LA Clippers,0.2782,27.4804,0.23
+1642346,Ryan Dunn,Phoenix Suns,0.2805,18.9778,0.23
 201142,Kevin Durant,Houston Rockets,0.4831,35.97,0.23
 1631105,Jalen Duren,Detroit Pistons,0.5556,27.7568,0.23
 1643407,AJ Dybantsa,Washington Wizards,0.2827,32.2857,0.23
 1642856,Egor Dëmin,Brooklyn Nets,0.2749,24.65,0.23
 1631106,Tari Eason,Houston Rockets,0.3047,25.3537,0.23
-1641744,Zach Edey,Memphis Grizzlies,0.3406,22.7586,0.23
-1642845,VJ Edgecombe,Philadelphia 76ers,0.3374,34.6947,0.23
+1641744,Zach Edey,Memphis Grizzlies,0.3405,22.7586,0.23
+1642845,VJ Edgecombe,Philadelphia 76ers,0.3352,34.6392,0.23
 1630162,Anthony Edwards,Minnesota Timberwolves,0.5235,34.8406,0.23
-1642348,Justin Edwards,Philadelphia 76ers,0.2796,13.75,0.23
+1642348,Justin Edwards,Philadelphia 76ers,0.2757,13.5405,0.23
 1643544,Zuby Ejiofor,Atlanta Hawks,0.2725,11.1429,0.23
 1631165,Keon Ellis,Brooklyn Nets,0.2434,20.8889,0.23
-203954,Joel Embiid,Philadelphia 76ers,0.4903,31.625,0.23
-1642855,Noa Essengue,Chicago Bulls,0.2156,12.7778,0.23
+203954,Joel Embiid,Philadelphia 76ers,0.4866,31.6034,0.23
+1642855,Noa Essengue,Chicago Bulls,0.2155,12.7778,0.23
 1642912,Isaiah Evans,Minnesota Timberwolves,0.2154,2.4,0.23
 1629605,Tacko Fall,Philadelphia 76ers,0.2274,3.0,0.23
 1642847,Jeremiah Fears,New Orleans Pelicans,0.3536,26.4038,0.23
-1642271,Kyle Filipowski,Utah Jazz,0.3678,21.011,0.23
-1627827,Dorian Finney-Smith,Atlanta Hawks,0.185,14.9535,0.23
+1642271,Kyle Filipowski,Utah Jazz,0.3662,20.8817,0.23
+1627827,Dorian Finney-Smith,Atlanta Hawks,0.1849,14.9535,0.23
 1642843,Cooper Flagg,Dallas Mavericks,0.4764,33.7,0.23
-1642853,Rasheer Fleming,Phoenix Suns,0.2337,11.8852,0.23
-1643412,Kingston Flemings,Atlanta Hawks,0.2703,21.9091,0.23
-1631323,Simone Fontecchio,Miami Heat,0.3243,15.4103,0.23
+1642853,Rasheer Fleming,Phoenix Suns,0.2311,11.8889,0.23
+1643412,Kingston Flemings,Atlanta Hawks,0.2702,21.9091,0.23
+1631323,Simone Fontecchio,Miami Heat,0.3215,15.2,0.23
 1628368,De'Aaron Fox,San Antonio Spurs,0.4299,30.6383,0.23
 1642277,Johnny Furphy,Indiana Pacers,0.2353,18.2857,0.23
 1629655,Daniel Gafford,Dallas Mavericks,0.3993,21.7922,0.23
-1642066,Myron Gardner,Miami Heat,0.2945,7.8545,0.23
-1629636,Darius Garland,LA Clippers,0.3925,30.8889,0.23
-1630568,Luka Garza,Boston Celtics,0.391,15.427,0.23
+1642066,Myron Gardner,Miami Heat,0.2984,7.9298,0.23
+1629636,Darius Garland,LA Clippers,0.3907,30.7077,0.23
+1630568,Luka Garza,Boston Celtics,0.3894,15.2857,0.23
 1641718,Keyonte George,Utah Jazz,0.4588,32.8108,0.23
 1642273,Kyshawn George,Washington Wizards,0.346,30.3,0.23
-202331,Paul George,Boston Celtics,0.4013,30.4364,0.23
+202331,Paul George,Boston Celtics,0.4141,30.4211,0.23
 1630581,Josh Giddey,Chicago Bulls,0.4211,31.0694,0.23
 1642933,Keshon Gilbert,Atlanta Hawks,0.2301,18.5,0.23
-1628983,Shai Gilgeous-Alexander,Oklahoma City Thunder,0.6701,33.1705,0.23
+1628983,Shai Gilgeous-Alexander,Oklahoma City Thunder,0.6687,33.0778,0.23
 1630264,Anthony Gill,Washington Wizards,0.2859,16.0164,0.23
-1631221,Collin Gillespie,Phoenix Suns,0.3383,27.7347,0.23
-1643551,Ja'Kobi Gillespie,San Antonio Spurs,0.2369,2.0,0.23
+1631221,Collin Gillespie,Phoenix Suns,0.3414,27.62,0.23
+1643551,Ja'Kobi Gillespie,San Antonio Spurs,0.2368,2.0,0.23
 203497,Rudy Gobert,Minnesota Timberwolves,0.3649,31.0208,0.23
-1642884,Vladislav Goldin,Miami Heat,0.2352,2.5556,0.23
-1642864,Hugo González,Boston Celtics,0.2322,14.2447,0.23
-1630692,Jordan Goodwin,Phoenix Suns,0.3304,22.05,0.23
+1642884,Vladislav Goldin,Miami Heat,0.2351,2.5556,0.23
+1642864,Hugo González,Boston Celtics,0.2396,14.3438,0.23
+1630692,Jordan Goodwin,Phoenix Suns,0.3413,21.8537,0.23
 203932,Aaron Gordon,Denver Nuggets,0.3617,28.3148,0.23
 203924,Jerami Grant,Memphis Grizzlies,0.3611,28.2208,0.23
-1643512,Allen Graves,Toronto Raptors,0.257,13.2,0.23
-1631260,AJ Green,Milwaukee Bucks,0.2411,27.2857,0.23
+1643512,Allen Graves,Toronto Raptors,0.2569,13.2,0.23
+1631260,AJ Green,Milwaukee Bucks,0.2401,26.9,0.23
 203110,Draymond Green,Golden State Warriors,0.2596,27.3721,0.23
-1630224,Jalen Green,Phoenix Suns,0.3111,26.86,0.23
+1630224,Jalen Green,Phoenix Suns,0.3135,26.6346,0.23
 1629750,Javonte Green,Detroit Pistons,0.3124,17.6176,0.23
-1630182,Josh Green,Utah Jazz,0.2207,16.1486,0.23
+1630182,Josh Green,Utah Jazz,0.2159,16.5132,0.23
 1629656,Quentin Grimes,Los Angeles Lakers,0.3051,28.7216,0.23
 1631243,Mouhamed Gueye,Atlanta Hawks,0.2764,15.2987,0.23
-1629060,Rui Hachimura,LA Clippers,0.2795,28.6951,0.23
+1629060,Rui Hachimura,LA Clippers,0.2821,28.5595,0.23
 1630169,Tyrese Haliburton,Indiana Pacers,0.359,33.0,0.23
-1641790,PJ Hall,Charlotte Hornets,0.264,10.3478,0.23
-203501,Tim Hardaway Jr.,Miami Heat,0.3109,24.23,0.23
+1641790,PJ Hall,Charlotte Hornets,0.2639,10.3478,0.23
+203501,Tim Hardaway Jr.,Miami Heat,0.3108,24.23,0.23
 201935,James Harden,Cleveland Cavaliers,0.459,34.337,0.23
 1630702,Jaden Hardy,Los Angeles Lakers,0.2785,13.6232,0.23
 1641989,Elijah Harkless,Detroit Pistons,0.243,19.6786,0.23
-1642844,Dylan Harper,San Antonio Spurs,0.3945,24.7143,0.23
-1631199,Ron Harper Jr.,Boston Celtics,0.2486,9.6923,0.23
+1642844,Dylan Harper,San Antonio Spurs,0.3944,24.7143,0.23
+1631199,Ron Harper Jr.,Boston Celtics,0.2423,9.4146,0.23
 202699,Tobias Harris,San Antonio Spurs,0.3521,27.7619,0.23
 1628404,Josh Hart,New York Knicks,0.3417,30.5,0.23
-1628392,Isaiah Hartenstein,Oklahoma City Thunder,0.3829,24.2687,0.23
-1630573,Sam Hauser,Boston Celtics,0.2774,24.0102,0.23
+1628392,Isaiah Hartenstein,Oklahoma City Thunder,0.3837,24.2609,0.23
+1630573,Sam Hauser,Boston Celtics,0.282,23.89,0.23
 1641722,Jordan Hawkins,Chicago Bulls,0.226,12.5738,0.23
-1629637,Jaxson Hayes,Utah Jazz,0.3633,19.8214,0.23
-1630703,Scoot Henderson,Portland Trail Blazers,0.2629,23.9792,0.23
-1641707,Taylor Hendricks,Memphis Grizzlies,0.2919,17.2609,0.23
+1629637,Jaxson Hayes,Utah Jazz,0.3618,19.7558,0.23
+1630703,Scoot Henderson,Portland Trail Blazers,0.2614,23.94,0.23
+1641707,Taylor Hendricks,Memphis Grizzlies,0.2918,17.2609,0.23
 1629639,Tyler Herro,Milwaukee Bucks,0.4258,31.0,0.23
-1626209,Mario Hezonja,Cleveland Cavaliers,0.2753,20.0909,0.23
+1626209,Mario Hezonja,Cleveland Cavaliers,0.2752,20.0909,0.23
 1627741,Buddy Hield,Chicago Bulls,0.3012,15.3433,0.23
-201950,Jrue Holiday,Portland Trail Blazers,0.4008,28.507,0.23
+201950,Jrue Holiday,Portland Trail Blazers,0.3985,28.411,0.23
 1641842,Ronald Holland II,Detroit Pistons,0.2854,18.898,0.23
-1641747,DaRon Holmes II,Denver Nuggets,0.259,7.0,0.23
+1641747,DaRon Holmes II,Denver Nuggets,0.2589,7.0,0.23
 1631096,Chet Holmgren,Oklahoma City Thunder,0.4625,29.0267,0.23
-1643624,Bryce Hopkins,Denver Nuggets,0.2423,14.2857,0.23
+1643624,Bryce Hopkins,Denver Nuggets,0.2422,14.2857,0.23
 201143,Al Horford,Golden State Warriors,0.3188,20.4127,0.23
 1641724,Jett Howard,Dallas Mavericks,0.2744,11.1538,0.23
 1628989,Kevin Huerter,Detroit Pistons,0.322,22.6067,0.23
-1630643,Jay Huff,Indiana Pacers,0.34,20.53,0.23
+1630643,Jay Huff,Indiana Pacers,0.3399,20.53,0.23
 1630574,Ariel Hukporti,Philadelphia 76ers,0.2477,9.2963,0.23
-1629631,De'Andre Hunter,Sacramento Kings,0.2814,27.6032,0.23
-1630538,Bones Hyland,Minnesota Timberwolves,0.3695,15.5806,0.23
-1642345,Oso Ighodaro,Phoenix Suns,0.2971,21.9375,0.23
+1629631,De'Andre Hunter,Sacramento Kings,0.2817,27.8,0.23
+1630538,Bones Hyland,Minnesota Timberwolves,0.3694,15.5806,0.23
+1642345,Oso Ighodaro,Phoenix Suns,0.296,21.898,0.23
 1643633,Graham Ike,Golden State Warriors,0.2823,9.875,0.23
 1627742,Brandon Ingram,LA Clippers,0.4106,33.7922,0.23
 1631127,Harrison Ingram,Utah Jazz,0.2361,3.7143,0.23
-202681,Kyrie Irving,Dallas Mavericks,0.3863,30.5556,0.23
+202681,Kyrie Irving,Dallas Mavericks,0.3862,30.5556,0.23
 1628371,Jonathan Isaac,Orlando Magic,0.2539,10.0,0.23
 1641713,GG Jackson,Memphis Grizzlies,0.3427,20.0274,0.23
-1630543,Isaiah Jackson,LA Clippers,0.3476,17.5493,0.23
+1630543,Isaiah Jackson,LA Clippers,0.3464,17.5068,0.23
 1631245,Quenton Jackson,Indiana Pacers,0.3475,19.3803,0.23
 1628991,Jaren Jackson Jr.,Utah Jazz,0.3774,29.6964,0.23
-1631218,Trayce Jackson-Davis,Toronto Raptors,0.3374,8.9014,0.23
-1642857,Kasparas Jakučionis,Milwaukee Bucks,0.2786,18.0959,0.23
+1631218,Trayce Jackson-Davis,Toronto Raptors,0.3373,8.9014,0.23
+1642857,Kasparas Jakučionis,Milwaukee Bucks,0.2788,18.2267,0.23
 1642355,Bronny James,Los Angeles Lakers,0.2275,7.7115,0.23
-2544,LeBron James,Philadelphia 76ers,0.4593,33.0769,0.23
+2544,LeBron James,Philadelphia 76ers,0.4564,32.975,0.23
 1642883,Sion James,Charlotte Hornets,0.2095,23.1154,0.23
-1631170,Jaime Jaquez Jr.,Milwaukee Bucks,0.3972,28.1789,0.23
-1643538,Joshua Jefferson,Brooklyn Nets,0.2178,4.0,0.23
+1631170,Jaime Jaquez Jr.,Milwaukee Bucks,0.397,28.1134,0.23
+1643538,Joshua Jefferson,Brooklyn Nets,0.2177,4.0,0.23
 1642450,Daniss Jenkins,Detroit Pistons,0.3481,21.413,0.23
 1629660,Ty Jerome,Memphis Grizzlies,0.4888,27.0606,0.23
-1630198,Isaiah Joe,Detroit Pistons,0.348,20.6234,0.23
-1642358,AJ Johnson,New Orleans Pelicans,0.2115,9.0926,0.23
-1629661,Cameron Johnson,Denver Nuggets,0.2968,30.0909,0.23
+1630198,Isaiah Joe,Detroit Pistons,0.3479,20.6234,0.23
+1642358,AJ Johnson,New Orleans Pelicans,0.2114,9.0926,0.23
+1629661,Cameron Johnson,Denver Nuggets,0.2967,30.0909,0.23
 1643052,Chaney Johnson,Brooklyn Nets,0.2456,19.7027,0.23
 1630552,Jalen Johnson,Atlanta Hawks,0.4968,34.9,0.23
 1629640,Keldon Johnson,San Antonio Spurs,0.3751,23.3654,0.23
-1642352,Keshad Johnson,Miami Heat,0.2838,8.7188,0.23
+1642352,Keshad Johnson,Miami Heat,0.2837,8.7188,0.23
 1642848,Tre Johnson,Washington Wizards,0.2592,23.575,0.23
-1643516,Morez Johnson Jr.,Dallas Mavericks,0.2784,17.1,0.23
+1643516,Morez Johnson Jr.,Dallas Mavericks,0.2783,17.1,0.23
 203999,Nikola Jokić,Denver Nuggets,0.6847,35.1446,0.23
-1630529,Herbert Jones,New Orleans Pelicans,0.215,26.7821,0.23
+1630529,Herbert Jones,New Orleans Pelicans,0.2149,26.7821,0.23
 1642403,Isaac Jones,Detroit Pistons,0.2301,4.2667,0.23
 1642880,Kam Jones,Milwaukee Bucks,0.2311,16.6486,0.23
-1642461,Spencer Jones,Denver Nuggets,0.2275,21.8676,0.23
+1642461,Spencer Jones,Denver Nuggets,0.2274,21.8676,0.23
 1630200,Tre Jones,Chicago Bulls,0.4464,24.9518,0.23
 1626145,Tyus Jones,Denver Nuggets,0.2325,13.8,0.23
-1642357,David Jones Garcia,San Antonio Spurs,0.2489,5.5294,0.23
-1627884,Derrick Jones Jr.,LA Clippers,0.2997,27.6515,0.23
-201599,DeAndre Jordan,New Orleans Pelicans,0.2807,16.5,0.23
-1631107,Nikola Jović,Miami Heat,0.2527,16.0656,0.23
+1642357,David Jones Garcia,San Antonio Spurs,0.2488,5.5294,0.23
+1627884,Derrick Jones Jr.,LA Clippers,0.3016,27.5441,0.23
+201599,DeAndre Jordan,New Orleans Pelicans,0.2806,16.5,0.23
+1631107,Nikola Jović,Miami Heat,0.2526,16.0656,0.23
 1641750,Ryan Kalkbrenner,Charlotte Hornets,0.3599,20.8132,0.23
 1641751,Arthur Kaluma,Los Angeles Lakers,0.23,12.0,0.23
-1642284,Alex Karaban,Sacramento Kings,0.1995,9.8,0.23
-1628379,Luke Kennard,Phoenix Suns,0.3232,20.5957,0.23
-1643257,Jayson Kent,Portland Trail Blazers,0.2217,6.7778,0.23
-1631117,Walker Kessler,Los Angeles Lakers,0.4052,30.931,0.23
-1630557,Corey Kispert,Atlanta Hawks,0.3327,17.1143,0.23
-1642261,Dalton Knecht,New York Knicks,0.2558,10.2414,0.23
+1642284,Alex Karaban,Sacramento Kings,0.1994,9.8,0.23
+1628379,Luke Kennard,Phoenix Suns,0.3245,20.625,0.23
+1643257,Jayson Kent,Portland Trail Blazers,0.2216,6.7778,0.23
+1631117,Walker Kessler,Los Angeles Lakers,0.4051,30.931,0.23
+1630557,Corey Kispert,Atlanta Hawks,0.3326,17.1143,0.23
+1642261,Dalton Knecht,New York Knicks,0.255,10.1667,0.23
 1642851,Kon Knueppel,Charlotte Hornets,0.4028,30.8554,0.23
-1642278,Tyler Kolek,New York Knicks,0.2914,11.8816,0.23
+1642278,Tyler Kolek,New York Knicks,0.3024,11.9615,0.23
 1628436,Luke Kornet,San Antonio Spurs,0.3512,19.5333,0.23
-1630249,Vít Krejčí,Portland Trail Blazers,0.2704,19.3797,0.23
+1630249,Vít Krejčí,Portland Trail Blazers,0.2703,19.3797,0.23
 1630228,Jonathan Kuminga,Minnesota Timberwolves,0.3268,25.9483,0.23
-1628398,Kyle Kuzma,Milwaukee Bucks,0.3364,26.4944,0.23
+1628398,Kyle Kuzma,Milwaukee Bucks,0.3345,26.4835,0.23
 1631222,Jake LaRavia,Los Angeles Lakers,0.2687,25.0962,0.23
-203897,Zach LaVine,Sacramento Kings,0.3681,31.8644,0.23
+203897,Zach LaVine,Sacramento Kings,0.376,31.9016,0.23
 1629111,Jock Landale,Atlanta Hawks,0.3664,20.8452,0.23
 1642404,Chaz Lanier,Detroit Pistons,0.2322,6.9524,0.23
-1641796,Pelle Larsson,Miami Heat,0.3273,27.1111,0.23
-1643588,Tobi Lawal,Dallas Mavericks,0.245,2.6667,0.23
+1641796,Pelle Larsson,Miami Heat,0.329,27.1957,0.23
+1643588,Tobi Lawal,Dallas Mavericks,0.2449,2.6667,0.23
 1627747,Caris LeVert,Milwaukee Bucks,0.2729,19.2333,0.23
 1642865,Yaxel Lendeborg,Golden State Warriors,0.392,31.7273,0.23
 202695,Kawhi Leonard,Toronto Raptors,0.5923,31.7536,0.23
 1642502,Malevy Leons,Golden State Warriors,0.2352,9.027,0.23
-203081,Damian Lillard,Portland Trail Blazers,0.3489,29.4444,0.23
+203081,Damian Lillard,Portland Trail Blazers,0.3701,28.9,0.23
 1641726,Dereck Lively II,Dallas Mavericks,0.2491,16.4286,0.23
 1626172,Kevon Looney,Los Angeles Lakers,0.2579,11.8387,0.23
-201572,Brook Lopez,LA Clippers,0.3106,22.2043,0.23
+201572,Brook Lopez,LA Clippers,0.3102,22.1368,0.23
 1631126,Caleb Love,Philadelphia 76ers,0.2809,19.902,0.23
-1643133,Lawson Lovering,Los Angeles Lakers,0.2387,9.0,0.23
 1626168,Trey Lyles,Minnesota Timberwolves,0.2666,18.4545,0.23
-1643510,Karim López,Memphis Grizzlies,0.237,3.6667,0.23
-1642863,Khaman Maluach,Phoenix Suns,0.3011,11.9375,0.23
+1643510,Karim López,Memphis Grizzlies,0.2369,3.6667,0.23
+1642863,Khaman Maluach,Phoenix Suns,0.3084,12.2424,0.23
 1630572,Sandro Mamukelashvili,Los Angeles Lakers,0.3935,22.2692,0.23
 1629611,Terance Mann,Brooklyn Nets,0.2343,23.1096,0.23
 1630544,Tre Mann,Washington Wizards,0.2344,11.4444,0.23
-1643530,Aday Mara,Oklahoma City Thunder,0.2918,19.8,0.23
+1643530,Aday Mara,Oklahoma City Thunder,0.2986,20.3636,0.23
 1628374,Lauri Markkanen,Utah Jazz,0.4686,33.4138,0.23
-1642881,Bogoljub Marković,Milwaukee Bucks,0.2341,5.0,0.23
+1642881,Bogoljub Marković,Milwaukee Bucks,0.2352,4.5,0.23
 1630230,Naji Marshall,Dallas Mavericks,0.3712,28.6556,0.23
-1642918,Alijah Martin,Toronto Raptors,0.2728,8.4634,0.23
+1642918,Alijah Martin,Toronto Raptors,0.2727,8.4634,0.23
 1628997,Caleb Martin,Dallas Mavericks,0.2242,15.5139,0.23
 1643568,Nick Martinelli,LA Clippers,0.2573,4.2,0.23
 1642942,Jahmai Mashack,Memphis Grizzlies,0.2153,18.5405,0.23
 1631097,Bennedict Mathurin,New Orleans Pelicans,0.3389,25.8421,0.23
-1631255,Karlo Matković,New Orleans Pelicans,0.3458,15.6098,0.23
-1630178,Tyrese Maxey,Philadelphia 76ers,0.5256,37.6848,0.23
+1631255,Karlo Matković,New Orleans Pelicans,0.3457,15.6098,0.23
+1630178,Tyrese Maxey,Philadelphia 76ers,0.5262,37.6064,0.23
 1643024,Chris Mañon,Los Angeles Lakers,0.2289,4.6923,0.23
-1630540,Miles McBride,New York Knicks,0.2984,23.5932,0.23
-1642272,Jared McCain,Oklahoma City Thunder,0.2861,19.1609,0.23
-203468,CJ McCollum,Atlanta Hawks,0.3928,28.75,0.23
-204456,T.J. McConnell,Indiana Pacers,0.4218,16.6,0.23
+1630540,Miles McBride,New York Knicks,0.2986,23.6393,0.23
+1642272,Jared McCain,Oklahoma City Thunder,0.292,19.427,0.23
+203468,CJ McCollum,Atlanta Hawks,0.3927,28.75,0.23
+204456,T.J. McConnell,Indiana Pacers,0.4217,16.6,0.23
 1641755,Kevin McCullar Jr.,Toronto Raptors,0.2343,7.381,0.23
 1630183,Jaden McDaniels,Minnesota Timberwolves,0.3458,32.2421,0.23
-1631121,Bryce McGowens,New Orleans Pelicans,0.2696,18.5741,0.23
+1631121,Bryce McGowens,New Orleans Pelicans,0.2695,18.5741,0.23
 1629162,Jordan McLaughlin,San Antonio Spurs,0.2515,6.8036,0.23
-1642862,Liam McNeeley,Charlotte Hornets,0.2372,11.3953,0.23
+1642862,Liam McNeeley,Charlotte Hornets,0.2371,11.3953,0.23
 1629001,De'Anthony Melton,Golden State Warriors,0.3381,22.7465,0.23
 1630241,Sam Merrill,Cleveland Cavaliers,0.312,25.6143,0.23
 203114,Khris Middleton,Washington Wizards,0.2695,21.589,0.23
-1642394,Baba Miller,LA Clippers,0.2618,9.625,0.23
+1642394,Baba Miller,LA Clippers,0.2819,10.3333,0.23
 1641706,Brandon Miller,Charlotte Hornets,0.3898,30.4588,0.23
 1641757,Jordan Miller,LA Clippers,0.3437,22.0333,0.23
-1631159,Leonard Miller,Chicago Bulls,0.3217,16.1774,0.23
-1642434,Riley Minix,Cleveland Cavaliers,0.2501,8.3333,0.23
+1631159,Leonard Miller,Chicago Bulls,0.3216,16.1774,0.23
+1642434,Riley Minix,Cleveland Cavaliers,0.25,8.3333,0.23
 1631169,Josh Minott,Brooklyn Nets,0.3288,14.8254,0.23
 1642274,Yves Missi,New Orleans Pelicans,0.3309,19.6143,0.23
-1642349,Ajay Mitchell,Oklahoma City Thunder,0.4068,26.1688,0.23
-1630558,Davion Mitchell,Miami Heat,0.3264,30.1,0.23
-1641759,Dillon Mitchell,Boston Celtics,0.2285,2.0,0.23
+1642349,Ajay Mitchell,Oklahoma City Thunder,0.4052,26.2152,0.23
+1630558,Davion Mitchell,Miami Heat,0.3293,30.2717,0.23
+1641759,Dillon Mitchell,Boston Celtics,0.2284,2.0,0.23
 1628378,Donovan Mitchell,Cleveland Cavaliers,0.5402,33.2283,0.23
-1630596,Evan Mobley,Cleveland Cavaliers,0.4597,31.9885,0.23
+1630596,Evan Mobley,Cleveland Cavaliers,0.4596,31.9885,0.23
 1642367,Jonathan Mogbo,Sacramento Kings,0.241,7.84,0.23
-1628370,Malik Monk,Sacramento Kings,0.3364,20.8375,0.23
+1628370,Malik Monk,Sacramento Kings,0.3355,20.4024,0.23
 1630541,Moses Moody,Golden State Warriors,0.3217,25.6833,0.23
-1631457,Alex Morales,Orlando Magic,0.2008,8.25,0.23
+1631457,Alex Morales,Orlando Magic,0.2005,10.5556,0.23
 1629630,Ja Morant,Portland Trail Blazers,0.3865,27.7143,0.23
 1630530,Trey Murphy III,New Orleans Pelicans,0.421,34.8929,0.23
 1627749,Dejounte Murray,New Orleans Pelicans,0.345,30.0,0.23
 1627750,Jamal Murray,Denver Nuggets,0.5281,35.6452,0.23
-1631099,Keegan Murray,Sacramento Kings,0.2625,32.7241,0.23
+1631099,Keegan Murray,Sacramento Kings,0.2631,32.1613,0.23
 1631200,Kris Murray,Memphis Grizzlies,0.2274,21.2254,0.23
 1642867,Collin Murray-Boyles,Toronto Raptors,0.3475,21.9333,0.23
-1629004,Svi Mykhailiuk,Utah Jazz,0.2563,20.8,0.23
+1629004,Svi Mykhailiuk,Utah Jazz,0.2555,20.8056,0.23
 1631250,Pete Nance,Milwaukee Bucks,0.2615,15.5745,0.23
 1626204,Larry Nance Jr.,Indiana Pacers,0.2414,13.8,0.23
 1641761,Grant Nelson,Brooklyn Nets,0.2414,8.75,0.23
@@ -340,99 +339,99 @@ PLAYER_ID,PLAYER_NAME,TEAM_NAME,rate,exp_min,repl
 1629614,Andrew Nembhard,Indiana Pacers,0.3935,31.7867,0.23
 1642948,Ryan Nembhard,Denver Nuggets,0.2863,18.0303,0.23
 1630174,Aaron Nesmith,Indiana Pacers,0.2795,28.4444,0.23
-1642854,Asa Newell,Atlanta Hawks,0.2875,11.3333,0.23
+1642854,Asa Newell,Atlanta Hawks,0.2874,11.3333,0.23
 1627777,Georges Niang,Golden State Warriors,0.2583,20.4545,0.23
 1643589,Tyler Nickel,New York Knicks,0.23,12.0,0.23
 1642949,Yanic Konan Niederhäuser,LA Clippers,0.2912,10.3659,0.23
 1630192,Zeke Nnaji,Denver Nuggets,0.2515,11.4821,0.23
 203994,Jusuf Nurkić,Utah Jazz,0.3598,26.439,0.23
 1626220,Royce O'Neale,Charlotte Hornets,0.2685,26.35,0.23
-1629006,Josh Okogie,Utah Jazz,0.2192,17.6458,0.23
+1629006,Josh Okogie,Utah Jazz,0.2187,17.7143,0.23
 1630168,Onyeka Okongwu,Atlanta Hawks,0.3911,30.7143,0.23
-1643536,Ebuka Okorie,Detroit Pistons,0.2334,4.2,0.23
-1630171,Isaac Okoro,Chicago Bulls,0.2468,25.0988,0.23
-1643590,Felix Okpara,Washington Wizards,0.2314,2.0,0.23
+1643536,Ebuka Okorie,Detroit Pistons,0.2333,4.2,0.23
+1630171,Isaac Okoro,Chicago Bulls,0.2467,25.0988,0.23
+1643590,Felix Okpara,Washington Wizards,0.2313,2.0,0.23
 1641807,Norchad Omier,Cleveland Cavaliers,0.2455,5.3,0.23
 1642391,Ugonna Onyenso,Detroit Pistons,0.23,12.0,0.23
-1626162,Kelly Oubre Jr.,Indiana Pacers,0.3004,29.1029,0.23
+1626162,Kelly Oubre Jr.,Indiana Pacers,0.3003,29.1029,0.23
 1627780,Gary Payton II,Golden State Warriors,0.3574,15.1613,0.23
-1643520,Koa Peat,Phoenix Suns,0.2408,4.2,0.23
-1642877,Micah Peavy,Oklahoma City Thunder,0.2201,15.274,0.23
+1643520,Koa Peat,Phoenix Suns,0.2443,4.5,0.23
+1642877,Micah Peavy,Oklahoma City Thunder,0.2125,15.4267,0.23
 1642951,Sean Pedulla,Sacramento Kings,0.2287,4.4286,0.23
-1642869,Noah Penda,Orlando Magic,0.2603,12.8983,0.23
-1643408,Darryn Peterson,Utah Jazz,0.2929,30.7,0.23
+1642869,Noah Penda,Orlando Magic,0.2602,12.8983,0.23
+1643408,Darryn Peterson,Utah Jazz,0.2995,30.7273,0.23
 1641763,Julian Phillips,Houston Rockets,0.2345,8.9375,0.23
-1642889,Labaron Philon Jr.,Philadelphia 76ers,0.2154,6.5,0.23
-1629618,Jalen Pickett,LA Clippers,0.2613,14.5172,0.23
+1642889,Labaron Philon Jr.,Philadelphia 76ers,0.2194,6.4286,0.23
+1629618,Jalen Pickett,LA Clippers,0.2619,14.3,0.23
 1643555,Jaron Pierre Jr.,New Orleans Pelicans,0.23,12.0,0.23
 1630590,Scotty Pippen Jr.,Memphis Grizzlies,0.2798,18.7,0.23
-1631342,Daeqwon Plowden,Sacramento Kings,0.2508,22.0217,0.23
+1631342,Daeqwon Plowden,Sacramento Kings,0.249,21.1875,0.23
 1641764,Brandin Podziemski,Golden State Warriors,0.3795,29.3,0.23
 1627751,Jakob Poeltl,Toronto Raptors,0.3661,24.4194,0.23
 1629673,Jordan Poole,New Orleans Pelicans,0.2888,23.0816,0.23
-1641854,Craig Porter Jr.,Cleveland Cavaliers,0.2932,16.1829,0.23
+1641854,Craig Porter Jr.,Cleveland Cavaliers,0.2931,16.1829,0.23
 1629008,Michael Porter Jr.,Brooklyn Nets,0.449,32.6389,0.23
-1626171,Bobby Portis Jr.,Miami Heat,0.3649,23.3448,0.23
-204001,Kristaps Porziņģis,Golden State Warriors,0.4002,24.0625,0.23
+1626171,Bobby Portis Jr.,Miami Heat,0.3621,23.2022,0.23
+204001,Kristaps Porziņģis,Golden State Warriors,0.4001,24.0625,0.23
 1642366,Quinten Post,Memphis Grizzlies,0.296,16.4699,0.23
-1630695,Micah Potter,Portland Trail Blazers,0.3577,17.3509,0.23
+1630695,Micah Potter,Portland Trail Blazers,0.3545,16.9322,0.23
 1642962,Drake Powell,Brooklyn Nets,0.2077,19.8986,0.23
 1626181,Norman Powell,Chicago Bulls,0.4326,29.473,0.23
 1627752,Taurean Prince,Detroit Pistons,0.2534,21.3,0.23
-1630202,Payton Pritchard,Boston Celtics,0.389,31.2424,0.23
-1642878,Tyrese Proctor,Cleveland Cavaliers,0.2983,12.5857,0.23
+1630202,Payton Pritchard,Boston Celtics,0.3912,31.2178,0.23
+1642878,Tyrese Proctor,Cleveland Cavaliers,0.2982,12.5857,0.23
 1641765,Olivier-Maxence Prosper,Memphis Grizzlies,0.3607,16.4286,0.23
 1642389,Zyon Pullin,Minnesota Timberwolves,0.2532,6.2222,0.23
 1643519,Jayden Quaintance,San Antonio Spurs,0.23,12.0,0.23
 1642852,Derik Queen,New Orleans Pelicans,0.3855,24.4466,0.23
-1629674,Neemias Queta,Boston Celtics,0.4026,24.5938,0.23
+1629674,Neemias Queta,Boston Celtics,0.4,24.5408,0.23
 1630193,Immanuel Quickley,Toronto Raptors,0.4064,31.9186,0.23
 203944,Julius Randle,Brooklyn Nets,0.4419,33.1313,0.23
 1642875,Maxime Raynaud,Sacramento Kings,0.3606,26.5946,0.23
-1641871,Duop Reath,Phoenix Suns,0.2533,7.3636,0.23
+1641871,Duop Reath,Phoenix Suns,0.2532,7.3636,0.23
 1630559,Austin Reaves,Los Angeles Lakers,0.4658,35.0548,0.23
-1630194,Paul Reed,Detroit Pistons,0.4318,16.6941,0.23
-1643542,Tarris Reed Jr.,San Antonio Spurs,0.2361,5.8571,0.23
+1630194,Paul Reed,Detroit Pistons,0.4317,16.6941,0.23
+1643542,Tarris Reed Jr.,San Antonio Spurs,0.236,5.8571,0.23
 1642882,Julian Reese,New Orleans Pelicans,0.2758,22.7368,0.23
 1629675,Naz Reid,Charlotte Hornets,0.3594,26.8586,0.23
 1642954,Will Richard,Golden State Warriors,0.262,19.3034,0.23
-1630208,Nick Richards,Miami Heat,0.2767,12.4655,0.23
-1642859,Jase Richardson,Orlando Magic,0.2435,13.8194,0.23
+1630208,Nick Richards,Miami Heat,0.2766,12.4655,0.23
+1642859,Jase Richardson,Orlando Magic,0.2448,13.8514,0.23
 1642860,Will Riley,Washington Wizards,0.2962,19.0543,0.23
-1642258,Zaccharie Risacher,Dallas Mavericks,0.2865,22.8539,0.23
+1642258,Zaccharie Risacher,Dallas Mavericks,0.2864,22.8539,0.23
 1629130,Duncan Robinson,Detroit Pistons,0.333,28.1546,0.23
-1629011,Mitchell Robinson,Boston Celtics,0.3802,19.3846,0.23
-1631157,Ryan Rollins,Milwaukee Bucks,0.3746,30.2234,0.23
-1641712,Rayan Rupert,Philadelphia 76ers,0.2277,16.2879,0.23
+1629011,Mitchell Robinson,Boston Celtics,0.378,19.325,0.23
+1631157,Ryan Rollins,Milwaukee Bucks,0.3767,30.0938,0.23
+1641712,Rayan Rupert,Philadelphia 76ers,0.2268,15.9853,0.23
 1642504,Cormac Ryan,Milwaukee Bucks,0.2922,24.5455,0.23
-1627734,Domantas Sabonis,Sacramento Kings,0.4025,32.5676,0.23
+1627734,Domantas Sabonis,Sacramento Kings,0.3937,32.1282,0.23
 1642275,Tidjane Salaün,Charlotte Hornets,0.2901,15.4386,0.23
-1642920,Kobe Sanders,LA Clippers,0.2552,20.7791,0.23
+1642920,Kobe Sanders,LA Clippers,0.2568,20.8977,0.23
 1630611,Gui Santos,Golden State Warriors,0.3219,20.3095,0.23
 1642879,Ben Saraf,Brooklyn Nets,0.2312,20.087,0.23
 1642259,Alex Sarr,Washington Wizards,0.4059,26.8235,0.23
-1631204,Marcus Sasser,Dallas Mavericks,0.2601,13.4643,0.23
+1631204,Marcus Sasser,Dallas Mavericks,0.26,13.4643,0.23
 1643563,Richie Saunders,Memphis Grizzlies,0.23,12.0,0.23
-1631248,Baylor Scheierman,Boston Celtics,0.2582,18.9278,0.23
+1631248,Baylor Scheierman,Boston Celtics,0.259,18.9091,0.23
 203471,Dennis Schröder,Charlotte Hornets,0.3007,25.3864,0.23
-1643637,Jaylin Sellers,Chicago Bulls,0.2351,9.0,0.23
+1643637,Jaylin Sellers,Chicago Bulls,0.235,9.0,0.23
 1630578,Alperen Sengun,Houston Rockets,0.4872,33.6333,0.23
-1641729,Brice Sensabaugh,Utah Jazz,0.3609,21.5474,0.23
+1641729,Brice Sensabaugh,Utah Jazz,0.3611,21.3918,0.23
 1629012,Collin Sexton,Los Angeles Lakers,0.4004,22.3667,0.23
-1629013,Landry Shamet,New York Knicks,0.2631,23.6087,0.23
+1629013,Landry Shamet,New York Knicks,0.2642,23.7324,0.23
 1630545,Terrence Shannon Jr,Minnesota Timberwolves,0.2894,14.8814,0.23
-1643567,Emanuel Sharp,Sacramento Kings,0.1956,18.0,0.23
+1643567,Emanuel Sharp,Sacramento Kings,0.1868,18.0909,0.23
 1630549,Day'Ron Sharpe,Brooklyn Nets,0.3954,19.9146,0.23
 1631101,Shaedon Sharpe,Portland Trail Blazers,0.3758,29.42,0.23
 1642347,Jamal Shead,Toronto Raptors,0.2809,22.8529,0.23
-1641767,Ben Sheppard,Indiana Pacers,0.249,21.1045,0.23
+1641767,Ben Sheppard,Indiana Pacers,0.2489,21.1045,0.23
 1642263,Reed Sheppard,Houston Rockets,0.3591,25.102,0.23
 1627783,Pascal Siakam,Indiana Pacers,0.4669,32.9512,0.23
 1627732,Ben Simmons,Sacramento Kings,0.23,12.0,0.23
-1629014,Anfernee Simons,Philadelphia 76ers,0.315,24.0649,0.23
-1630579,Jericho Sims,Milwaukee Bucks,0.2639,17.8861,0.23
+1629014,Anfernee Simons,Philadelphia 76ers,0.3198,23.9114,0.23
+1630579,Jericho Sims,Milwaukee Bucks,0.2631,17.642,0.23
 1641771,Jalen Slawson,Indiana Pacers,0.266,18.6774,0.23
-1642914,Javon Small,Memphis Grizzlies,0.3444,20.4255,0.23
+1642914,Javon Small,Memphis Grizzlies,0.3443,20.4255,0.23
 203935,Marcus Smart,Houston Rockets,0.2529,27.141,0.23
 1643552,Braden Smith,Indiana Pacers,0.2384,13.25,0.23
 1630696,Dru Smith,Miami Heat,0.3221,15.2195,0.23
@@ -445,79 +444,79 @@ PLAYER_ID,PLAYER_NAME,TEAM_NAME,rate,exp_min,repl
 1630311,Pat Spencer,Phoenix Suns,0.2982,17.0405,0.23
 1643419,Hannes Steinbach,Charlotte Hornets,0.2281,12.6,0.23
 1630191,Isaiah Stewart,Memphis Grizzlies,0.3515,21.8056,0.23
-1642892,Bennett Stirtz,Oklahoma City Thunder,0.2675,18.0,0.23
+1642892,Bennett Stirtz,Oklahoma City Thunder,0.2743,18.0,0.23
 1631124,Julian Strawther,Denver Nuggets,0.2928,15.1053,0.23
-1629622,Max Strus,LA Clippers,0.2734,23.2222,0.23
+1629622,Max Strus,LA Clippers,0.2797,23.1,0.23
 1630591,Jalen Suggs,Orlando Magic,0.3541,28.0952,0.23
-1643517,Dailyn Swain,Chicago Bulls,0.2267,9.5,0.23
-1630256,Jae'Sean Tate,Houston Rockets,0.2317,7.5172,0.23
-1628369,Jayson Tatum,Boston Celtics,0.4584,33.2353,0.23
+1643517,Dailyn Swain,Chicago Bulls,0.2266,9.5,0.23
+1630256,Jae'Sean Tate,Houston Rockets,0.2316,7.5172,0.23
+1628369,Jayson Tatum,Boston Celtics,0.4596,33.1667,0.23
 1642876,Adou Thiero,Los Angeles Lakers,0.2482,6.2903,0.23
-1643509,Meleek Thomas,Cleveland Cavaliers,0.2895,23.0,0.23
+1643509,Meleek Thomas,Cleveland Cavaliers,0.2894,23.0,0.23
 1641708,Amen Thompson,Houston Rockets,0.4183,36.5149,0.23
 1641709,Ausar Thompson,Detroit Pistons,0.3536,26.2418,0.23
-202691,Klay Thompson,Miami Heat,0.3129,22.2247,0.23
-1643570,Bruce Thornton,Houston Rockets,0.2382,2.8571,0.23
+202691,Klay Thompson,Miami Heat,0.3096,22.3956,0.23
+1643570,Bruce Thornton,Houston Rockets,0.2381,2.8571,0.23
 1629680,Matisse Thybulle,Los Angeles Lakers,0.2773,19.7593,0.23
-1631166,Drew Timme,Phoenix Suns,0.2541,8.7407,0.23
-1641772,Nae'Qwan Tomlin,Cleveland Cavaliers,0.2861,15.7344,0.23
-1642910,John Tonje,Portland Trail Blazers,0.2381,6.5,0.23
+1631166,Drew Timme,Phoenix Suns,0.254,8.7407,0.23
+1641772,Nae'Qwan Tomlin,Cleveland Cavaliers,0.286,15.7344,0.23
+1642910,John Tonje,Portland Trail Blazers,0.238,6.5,0.23
 1642260,Nikola Topić,Oklahoma City Thunder,0.2316,16.0,0.23
 1630167,Obi Toppin,Indiana Pacers,0.3918,19.375,0.23
-1626157,Karl-Anthony Towns,New York Knicks,0.5008,31.0645,0.23
+1626157,Karl-Anthony Towns,New York Knicks,0.5037,30.9789,0.23
 1642849,Nolan Traore,Brooklyn Nets,0.2768,22.2105,0.23
-1629018,Gary Trent Jr.,Milwaukee Bucks,0.2257,20.3188,0.23
-1631131,Oscar Tshiebwe,Houston Rockets,0.3535,13.8718,0.23
-1626167,Myles Turner,Milwaukee Bucks,0.3071,26.9451,0.23
-1642281,Jaylon Tyson,Cleveland Cavaliers,0.3387,26.1447,0.23
+1629018,Gary Trent Jr.,Milwaukee Bucks,0.2265,19.9155,0.23
+1631131,Oscar Tshiebwe,Houston Rockets,0.3534,13.8718,0.23
+1626167,Myles Turner,Milwaukee Bucks,0.3009,26.9462,0.23
+1642281,Jaylon Tyson,Cleveland Cavaliers,0.3386,26.1447,0.23
 1643640,"Ernest Udeh, Jr.",Cleveland Cavaliers,0.23,12.0,0.23
 1627832,Fred VanVleet,Houston Rockets,0.2963,30.1111,0.23
-1629020,Jarred Vanderbilt,Los Angeles Lakers,0.2539,16.4557,0.23
+1629020,Jarred Vanderbilt,Los Angeles Lakers,0.2538,16.4557,0.23
 1630170,Devin Vassell,San Antonio Spurs,0.3256,30.4483,0.23
 1643539,Henri Veesaar,Atlanta Hawks,0.23,12.0,0.23
 1641774,Tristan Vukčević,Washington Wizards,0.3583,13.6735,0.23
-202696,Nikola Vučević,Orlando Magic,0.4016,24.061,0.23
-1629731,Dean Wade,Philadelphia 76ers,0.2467,22.9481,0.23
-1643413,Keaton Wagler,LA Clippers,0.2967,23.2222,0.23
-1630532,Franz Wagner,Orlando Magic,0.4113,32.2115,0.23
+202696,Nikola Vučević,Orlando Magic,0.3991,23.9167,0.23
+1629731,Dean Wade,Philadelphia 76ers,0.2496,22.9494,0.23
+1643413,Keaton Wagler,LA Clippers,0.2966,23.2,0.23
+1630532,Franz Wagner,Orlando Magic,0.4213,32.4259,0.23
 1629021,Moritz Wagner,Brooklyn Nets,0.3441,14.1607,0.23
-1631133,Jabari Walker,Philadelphia 76ers,0.2914,11.6667,0.23
+1631133,Jabari Walker,Philadelphia 76ers,0.2864,11.75,0.23
 1641716,Jarace Walker,Indiana Pacers,0.2941,24.9796,0.23
 1641717,Cason Wallace,Oklahoma City Thunder,0.2865,25.8434,0.23
-1641775,Jordan Walsh,Boston Celtics,0.2604,17.3409,0.23
-1642266,Ja'Kobe Walter,Toronto Raptors,0.2806,22.4239,0.23
-1642276,Kel'el Ware,Milwaukee Bucks,0.4255,21.1753,0.23
-1629023,P.J. Washington,Dallas Mavericks,0.318,31.7436,0.23
+1641775,Jordan Walsh,Boston Celtics,0.2618,17.3778,0.23
+1642266,Ja'Kobe Walter,Toronto Raptors,0.2805,22.4239,0.23
+1642276,Kel'el Ware,Milwaukee Bucks,0.4233,21.0909,0.23
+1629023,P.J. Washington,Dallas Mavericks,0.3179,31.7436,0.23
 1630570,Trendon Watford,New Orleans Pelicans,0.3017,16.5846,0.23
 1642364,Jamir Watkins,Washington Wizards,0.2739,20.58,0.23
 1631212,Peyton Watson,Cleveland Cavaliers,0.328,29.0556,0.23
 1642377,Jaylen Wells,Memphis Grizzlies,0.301,26.4831,0.23
 1641705,Victor Wembanyama,San Antonio Spurs,0.6959,29.3372,0.23
 1629632,Coby White,Charlotte Hornets,0.3663,23.9483,0.23
-1628401,Derrick White,Boston Celtics,0.3718,33.1856,0.23
-1641715,Cam Whitmore,Denver Nuggets,0.2842,15.36,0.23
+1628401,Derrick White,Boston Celtics,0.3683,32.9596,0.23
+1641715,Cam Whitmore,Denver Nuggets,0.2841,15.36,0.23
 1630598,Aaron Wiggins,Atlanta Hawks,0.315,22.9326,0.23
-203952,Andrew Wiggins,Miami Heat,0.3407,29.4545,0.23
-1642873,Amari Williams,Boston Celtics,0.2291,6.5455,0.23
+203952,Andrew Wiggins,Miami Heat,0.3423,29.2222,0.23
+1642873,Amari Williams,Boston Celtics,0.229,6.5455,0.23
 1630314,Brandon Williams,Golden State Warriors,0.4048,20.7907,0.23
 1642262,Cody Williams,Minnesota Timberwolves,0.2537,21.1772,0.23
 1629684,Grant Williams,Charlotte Hornets,0.2784,19.8056,0.23
-1631114,Jalen Williams,Oklahoma City Thunder,0.3829,28.8974,0.23
+1631114,Jalen Williams,Oklahoma City Thunder,0.3828,28.8974,0.23
 1631119,Jaylin Williams,Oklahoma City Thunder,0.2885,19.4557,0.23
-1629026,Kenrich Williams,Oklahoma City Thunder,0.3072,16.0526,0.23
+1629026,Kenrich Williams,Oklahoma City Thunder,0.3012,16.1282,0.23
 1631109,Mark Williams,Phoenix Suns,0.4276,23.5833,0.23
 1630172,Patrick Williams,Chicago Bulls,0.2298,20.6053,0.23
 1630533,Ziaire Williams,Los Angeles Lakers,0.3162,23.2703,0.23
-1629057,Robert Williams III,Portland Trail Blazers,0.432,16.9589,0.23
+1629057,Robert Williams III,Portland Trail Blazers,0.4307,16.9067,0.23
 1629627,Zion Williamson,New Orleans Pelicans,0.5096,30.5122,0.23
 1643410,Caleb Wilson,Chicago Bulls,0.3054,32.4444,0.23
 1630592,Jalen Wilson,Atlanta Hawks,0.2375,15.9444,0.23
-1630164,James Wiseman,New York Knicks,0.2249,8.25,0.23
-1642874,Danny Wolf,Brooklyn Nets,0.2954,21.1642,0.23
-1642905,Yang Hansen,Portland Trail Blazers,0.2166,7.6909,0.23
+1630164,James Wiseman,New York Knicks,0.2265,7.7857,0.23
+1642874,Danny Wolf,Brooklyn Nets,0.2953,21.1642,0.23
+1642905,Yang Hansen,Portland Trail Blazers,0.2135,7.5965,0.23
 1629027,Trae Young,Washington Wizards,0.3963,31.3514,0.23
-1642959,Chris Youngblood,Portland Trail Blazers,0.2378,7.2955,0.23
-1642911,Rocco Zikarsky,Minnesota Timberwolves,0.2414,5.8571,0.23
-1627826,Ivica Zubac,Indiana Pacers,0.3798,28.5333,0.23
+1642959,Chris Youngblood,Portland Trail Blazers,0.243,7.587,0.23
+1642911,Rocco Zikarsky,Minnesota Timberwolves,0.2413,5.8571,0.23
+1627826,Ivica Zubac,Indiana Pacers,0.3797,28.5333,0.23
 1641783,Tristan da Silva,Orlando Magic,0.2992,25.7684,0.23
-1643547,Sergio de Larrea,Dallas Mavericks,0.2378,11.75,0.23
+1643547,Sergio de Larrea,Dallas Mavericks,0.2377,11.75,0.23
