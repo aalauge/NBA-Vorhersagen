@@ -608,6 +608,9 @@ def _lade_nba_pdf(datum: str) -> pd.DataFrame:
                     if current_team:
                         line_clean = line_clean.replace(current_team.replace(' ', ''), ' ').replace(current_team, ' ')
                         line_clean = re.sub(r'\s+', ' ', line_clean).strip()
+                    # Matchup-Kürzel (z.B. "ATL@OKC") entfernen
+                    line_clean = re.sub(r"[A-Z]{2,3}@[A-Z]{2,3}", " ", line_clean)
+                    line_clean = re.sub(r"\s+", " ", line_clean).strip()
 
                     # Spieler + Status erkennen
                     m = player_re.search(line_clean)
@@ -618,6 +621,8 @@ def _lade_nba_pdf(datum: str) -> pd.DataFrame:
 
                         # Merged Suffixes bereinigen: "ButlerIII" → "Butler"
                         last_name = re.sub(r"(III|II|IV|Jr\.|Sr\.)$", "", last_name).strip()
+                        # Team-Kürzel vor dem Nachnamen entfernen: "TOR Bittle" → "Bittle"
+                        last_name = re.sub(r"^[A-Z]{2,3}\s+", "", last_name).strip()
 
                         verletzungen.append({
                             "Team": current_team,
