@@ -24,6 +24,7 @@ import re
 import sys
 import time
 from datetime import datetime
+from zoneinfo import ZoneInfo
 
 import unicodedata
 
@@ -697,7 +698,7 @@ def lade_verletzungen(impact_df=None, datum=None) -> pd.DataFrame:
     Validiert Team-Zuordnungen gegen player_stats.csv.
     """
     if datum is None:
-        datum = datetime.now().strftime("%Y-%m-%d")
+        datum = us_heute()
 
     # 1) Versuche NBA Official PDF
     df = _lade_nba_pdf(datum)
@@ -883,11 +884,16 @@ def enrich_with_odds(predictions_df, datum):
     return merged
 
 
+def us_heute() -> str:
+    """Heutiges Datum nach US-Ostküstenzeit (NBA-Spieltag), unabhängig von der Server-Zeitzone."""
+    return datetime.now(ZoneInfo("America/New_York")).strftime("%Y-%m-%d")
+
+
 # ─── MAIN ─────────────────────────────────────────────────────────────────────
 
 def main():
     parser = argparse.ArgumentParser(description="KOBRA – NBA Game Predictions")
-    parser.add_argument("--date", default=datetime.now().strftime("%Y-%m-%d"),
+    parser.add_argument("--date", default=us_heute(),
                         help="Datum für Vorhersagen (YYYY-MM-DD)")
     parser.add_argument("--seasons", nargs="+", type=int, default=None,
                         help="Saisons (default: 2 Vorsaisons + laufende Saison, automatisch)")

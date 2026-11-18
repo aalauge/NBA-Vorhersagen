@@ -45,17 +45,19 @@ jobs:
         env:
           BALLDONTLIE_API_KEY: ${{ secrets.BALLDONTLIE_API_KEY }}
         run: |
-          DATE_ARG=""
-          if [ -n "${{ github.event.inputs.date }}" ]; then
-            DATE_ARG="--date ${{ github.event.inputs.date }}"
+          DATE="${{ github.event.inputs.date }}"
+          if [ -z "$DATE" ]; then
+            DATE=$(TZ=America/New_York date +%Y-%m-%d)
           fi
-          python kobra.py $DATE_ARG --output predictions.csv
+          echo "KOBRA_DATE=$DATE" >> "$GITHUB_ENV"
+          echo "📅 Spieltag (US-Ostküste): $DATE"
+          python kobra.py --date "$DATE" --output predictions.csv
 
       - name: Frühprognose an Discord (Free)
         env:
           DISCORD_WEBHOOK_FREE: ${{ secrets.DISCORD_WEBHOOK_FREE }}
         run: |
-          DATUM=$(date +%d.%m.%Y)
+          DATUM=$(date -d "$KOBRA_DATE" +%d.%m.%Y)
           python notify_discord.py --morgens --predictions predictions.csv --datum "$DATUM"
 
       - name: Ergebnisse von gestern an Discord
@@ -63,7 +65,7 @@ jobs:
           BALLDONTLIE_API_KEY: ${{ secrets.BALLDONTLIE_API_KEY }}
           DISCORD_WEBHOOK_ERGEBNISSE: ${{ secrets.DISCORD_WEBHOOK_ERGEBNISSE }}
         run: |
-          GESTERN=$(date -d "yesterday" +%Y-%m-%d 2>/dev/null || date -v-1d +%Y-%m-%d)
+          GESTERN=$(date -d "$KOBRA_DATE -1 day" +%Y-%m-%d)
           PRED_FILE="results/predictions_${GESTERN}.csv"
           ODDS_FILE="odds/odds_${GESTERN}.csv"
 
@@ -98,7 +100,7 @@ jobs:
 
       - name: Ergebnisse ins Repo committen
         run: |
-          DATE=$(date +%Y-%m-%d)
+          DATE="$KOBRA_DATE"
           mkdir -p results
           cp predictions.csv "results/predictions_${DATE}.csv"
           git config user.name "github-actions[bot]"
@@ -134,19 +136,21 @@ jobs:
         env:
           BALLDONTLIE_API_KEY: ${{ secrets.BALLDONTLIE_API_KEY }}
         run: |
-          DATE_ARG=""
-          if [ -n "${{ github.event.inputs.date }}" ]; then
-            DATE_ARG="--date ${{ github.event.inputs.date }}"
+          DATE="${{ github.event.inputs.date }}"
+          if [ -z "$DATE" ]; then
+            DATE=$(TZ=America/New_York date +%Y-%m-%d)
           fi
-          python kobra.py $DATE_ARG --output predictions.csv
+          echo "KOBRA_DATE=$DATE" >> "$GITHUB_ENV"
+          echo "📅 Spieltag (US-Ostküste): $DATE"
+          python kobra.py --date "$DATE" --output predictions.csv
 
       - name: Discord – Final + Value Bets
         env:
           DISCORD_WEBHOOK_FREE: ${{ secrets.DISCORD_WEBHOOK_FREE }}
           DISCORD_WEBHOOK_PREMIUM: ${{ secrets.DISCORD_WEBHOOK_PREMIUM }}
         run: |
-          DATE=$(date +%Y-%m-%d)
-          DATUM=$(date +%d.%m.%Y)
+          DATE="$KOBRA_DATE"
+          DATUM=$(date -d "$KOBRA_DATE" +%d.%m.%Y)
           ODDS_FILE="odds/odds_${DATE}.csv"
 
           if [ -f "$ODDS_FILE" ]; then
@@ -159,7 +163,7 @@ jobs:
 
       - name: Aktualisierte Predictions committen
         run: |
-          DATE=$(date +%Y-%m-%d)
+          DATE="$KOBRA_DATE"
           mkdir -p results
           cp predictions.csv "results/predictions_${DATE}.csv"
           git config user.name "github-actions[bot]"
