@@ -18,7 +18,7 @@ cd "$REPO_DIR" || { echo "$(date): Ordner nicht gefunden!" >> "$LOG_FILE"; exit 
 /opt/anaconda3/bin/python3 update_kader.py >> "$LOG_FILE" 2>&1
 
 # Nur pushen wenn sich was geändert hat
-git add player_stats.csv kader_spieler.csv kader_historie.csv 2>/dev/null
+git add player_stats.csv kader_spieler.csv kader_historie.csv daten/player_games_*.csv 2>/dev/null   # Boxscores auch für KOBRA Props (Papier-Tracking)
 if git diff --cached --quiet; then
     echo "$(date): Keine Änderungen, nichts zu pushen." >> "$LOG_FILE"
 else
